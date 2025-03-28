@@ -38,13 +38,6 @@ DATABASE_PASSWORD=your_password
 DATABASE_NAME=your_database_name
 DATABASE_HOST=localhost
 DATABASE_PORT=4527
-
-# MinIO Configuration (Optional - defaults will be used if not set)
-MINIO_ENDPOINT=your_minio_endpoint
-MINIO_PORT=your_minio_port
-MINIO_USE_SSL=your_minio_use_ssl
-MINIO_ACCESS_KEY=your_minio_access_key
-MINIO_SECRET_KEY=your_minio_secret_key
 ```
 
 ## Running with Docker
