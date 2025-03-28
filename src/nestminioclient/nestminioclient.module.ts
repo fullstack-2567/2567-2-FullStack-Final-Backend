@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { NestMinioModule } from 'nestjs-minio';
 
 // Usage in controller/services: constructor(@Inject(MINIO_CONNECTION) private readonly minioClient: Client) {}
+// https://github.com/NestCrafts/nestjs-minio?tab=readme-ov-file#readme
 @Module({
   imports: [
     NestMinioModule.register({
