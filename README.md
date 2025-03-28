@@ -26,11 +26,61 @@
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
-## Project setup
+## Project Setup Guide
 
-```bash
-$ npm install
+## Environment Variables
+Create a `.env` file in the root directory with the following variables:
+
+```env
+# Database Configuration
+DATABASE_USERNAME=your_username
+DATABASE_PASSWORD=your_password
+DATABASE_NAME=your_database_name
+DATABASE_HOST=localhost
+DATABASE_PORT=4527
+
+# MinIO Configuration (Optional - defaults will be used if not set)
+MINIO_ENDPOINT=your_minio_endpoint
+MINIO_PORT=your_minio_port
+MINIO_USE_SSL=your_minio_use_ssl
+MINIO_ACCESS_KEY=your_minio_access_key
+MINIO_SECRET_KEY=your_minio_secret_key
 ```
+
+## Running with Docker
+
+1. Make sure you have Docker and Docker Compose installed on your system.
+
+2. Start the database container:
+```bash
+docker-compose up -d
+```
+
+This will start a PostgreSQL database container with the following configuration:
+- Port: 4527 (mapped to internal 5432)
+- Credentials: As specified in your .env file
+- Data persistence: Enabled through a Docker volume
+
+To stop the containers:
+```bash
+docker-compose down
+```
+
+## Running the Application
+
+After setting up Docker and the environment variables:
+
+1. Install dependencies:
+```bash
+npm install
+```
+
+2. Start the application:
+```bash
+npm run start:dev
+```
+
+The application should now be running and connected to the PostgreSQL database.
 
 ## Compile and run the project
 
