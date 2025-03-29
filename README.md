@@ -74,6 +74,8 @@ npm run start:dev
 ```
 
 The application should now be running and connected to the PostgreSQL database.
+Access the application at `http://localhost:3000/`
+Access the Swagger UI at `http://localhost:3000/api`
 
 ## Compile and run the project
 
