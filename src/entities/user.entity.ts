@@ -4,7 +4,7 @@ import { Model, Column, DataType, Table } from 'sequelize-typescript';
   tableName: 'User',
   timestamps: false,
 })
-export class Users extends Model {
+export class User extends Model {
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -37,7 +37,7 @@ export class Users extends Model {
   @Column({ type: DataType.STRING })
   LName: string;
 
-  @Column({ type: DataType.DATE })
+  @Column({ type: DataType.DATEONLY })
   BirthDate: Date;
 
   // เด็กชาย เด็กหญิง นาย นาง นางสาว

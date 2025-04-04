@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { Users } from 'src/entities/user.entity';
+import { Project } from 'src/entities/project.entity';
+import { User } from 'src/entities/user.entity';
 
 @Module({
   imports: [
@@ -12,7 +13,7 @@ import { Users } from 'src/entities/user.entity';
         username: process.env.DATABASE_USERNAME,
         password: process.env.DATABASE_PASSWORD,
         database: process.env.DATABASE_NAME,
-        models: [Users],
+        models: [User, Project],
         synchronize: true, // don't have to create table by yourself *DON'T use in production*
       }),
     }),
