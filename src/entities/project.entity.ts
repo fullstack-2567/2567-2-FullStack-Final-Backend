@@ -28,7 +28,7 @@ export class Project extends Model {
   })
   SubmittedByUserID: string;
 
-  @BelongsTo(() => User)
+  @BelongsTo(() => User, 'SubmittedByUserID')
   SubmittedByUser: User;
 
   @Column({ type: DataType.STRING, allowNull: false })
@@ -137,4 +137,52 @@ export class Project extends Model {
 
   @HasMany(() => Project, 'ParentProjectID')
   ChildProjects: Project[];
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  FirstApprovedDT: Date;
+
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  FirstApprovedByUserID: string;
+
+  @BelongsTo(() => User, 'FirstApprovedByUserID')
+  FirstApprovedByUser: User;
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  SecondApprovedDT: Date;
+
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  SecondApprovedByUserID: string;
+
+  @BelongsTo(() => User, 'SecondApprovedByUserID')
+  SecondApprovedByUser: User;
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  ThirdApprovedDT: Date;
+
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  ThirdApprovedByUserID: string;
+
+  @BelongsTo(() => User, 'ThirdApprovedByUserID')
+  ThirdApprovedByUser: User;
 }
