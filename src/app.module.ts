@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { DatabaseModule } from './database/database.module';
 import { ConfigModule } from '@nestjs/config';
 import { NestMinioClientModule } from './nestminioclient/nestminioclient.module';
+import { ProjectsModule } from './projects/projects.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { NestMinioClientModule } from './nestminioclient/nestminioclient.module'
     }),
     DatabaseModule,
     NestMinioClientModule,
+    ProjectsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
