@@ -1,5 +1,15 @@
 import { Model, Column, DataType, Table } from 'sequelize-typescript';
 import { ApiProperty } from '@nestjs/swagger';
+import {
+  EducationLevel,
+  educationLevelsArray,
+  UserPrefix,
+  userPrefixesArray,
+  UserRole,
+  userRolesArray,
+  UserSex,
+  userSexesArray,
+} from 'src/types/enums';
 
 @Table({
   tableName: 'User',
@@ -44,23 +54,23 @@ export class User extends Model {
 
   @ApiProperty({
     description: 'Role of the user',
-    enum: ['admin', 'user', 'project-approver'],
+    enum: userRolesArray,
     default: 'user',
     example: 'user',
   })
   @Column({
-    type: DataType.ENUM('admin', 'user', 'project-approver'),
+    type: DataType.ENUM(...userRolesArray),
     defaultValue: 'user',
   })
-  role: 'admin' | 'user' | 'project-approver';
+  role: UserRole;
 
   @ApiProperty({
     description: 'Gender of the user',
-    enum: ['male', 'female', 'other'],
+    enum: userSexesArray,
     example: 'male',
   })
-  @Column({ type: DataType.ENUM('male', 'female', 'other') })
-  sex: 'male' | 'female' | 'other';
+  @Column({ type: DataType.ENUM(...userSexesArray) })
+  sex: UserSex;
 
   @ApiProperty({
     description: 'First name of the user',
@@ -90,46 +100,23 @@ export class User extends Model {
 
   @ApiProperty({
     description: 'Title prefix of the user',
-    enum: ['master', 'miss', 'mr', 'mrs', 'ms'],
+    enum: userPrefixesArray,
     example: 'mr',
   })
   @Column({
-    type: DataType.ENUM('master', 'miss', 'mr', 'mrs', 'ms'),
+    type: DataType.ENUM(...userPrefixesArray),
   })
-  prefix: 'master' | 'miss' | 'mr' | 'mrs' | 'ms';
+  prefix: UserPrefix;
 
   @ApiProperty({
     description: 'Education level of the user',
-    enum: [
-      'elementary',
-      'secondary',
-      'bachelor',
-      'master',
-      'doctoral',
-      'vocational_certificate',
-      'high_vocational_certificate',
-    ],
+    enum: educationLevelsArray,
     example: 'bachelor',
   })
   @Column({
-    type: DataType.ENUM(
-      'elementary',
-      'secondary',
-      'bachelor',
-      'master',
-      'doctoral',
-      'vocational_certificate',
-      'high_vocational_certificate',
-    ),
+    type: DataType.ENUM(...educationLevelsArray),
   })
-  education:
-    | 'elementary'
-    | 'secondary'
-    | 'bachelor'
-    | 'master'
-    | 'doctoral'
-    | 'vocational_certificate'
-    | 'high_vocational_certificate';
+  education: EducationLevel;
 
   @ApiProperty({
     description: 'Telephone number of the user',

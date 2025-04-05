@@ -9,6 +9,12 @@ import {
 } from 'sequelize-typescript';
 import { User } from './user.entity';
 import { ApiProperty } from '@nestjs/swagger';
+import {
+  ProjectType,
+  projectTypesArray,
+  SDGType,
+  sdgTypesArray,
+} from 'src/types/enums';
 
 @Table({
   tableName: 'Project',
@@ -91,67 +97,14 @@ export class Project extends Model {
 
   @ApiProperty({
     description: 'SDG type of the project',
-    enum: [
-      'SDG1',
-      'SDG2',
-      'SDG3',
-      'SDG4',
-      'SDG5',
-      'SDG6',
-      'SDG7',
-      'SDG8',
-      'SDG9',
-      'SDG10',
-      'SDG11',
-      'SDG12',
-      'SDG13',
-      'SDG14',
-      'SDG15',
-      'SDG16',
-      'SDG17',
-    ],
+    enum: sdgTypesArray,
     example: 'SDG9',
   })
   @Column({
-    type: DataType.ENUM(
-      'SDG1',
-      'SDG2',
-      'SDG3',
-      'SDG4',
-      'SDG5',
-      'SDG6',
-      'SDG7',
-      'SDG8',
-      'SDG9',
-      'SDG10',
-      'SDG11',
-      'SDG12',
-      'SDG13',
-      'SDG14',
-      'SDG15',
-      'SDG16',
-      'SDG17',
-    ),
+    type: DataType.ENUM(...sdgTypesArray),
     allowNull: false,
   })
-  sdgType:
-    | 'SDG1'
-    | 'SDG2'
-    | 'SDG3'
-    | 'SDG4'
-    | 'SDG5'
-    | 'SDG6'
-    | 'SDG7'
-    | 'SDG8'
-    | 'SDG9'
-    | 'SDG10'
-    | 'SDG11'
-    | 'SDG12'
-    | 'SDG13'
-    | 'SDG14'
-    | 'SDG15'
-    | 'SDG16'
-    | 'SDG17';
+  sdgType: SDGType;
 
   @ApiProperty({ description: 'Project description file path' })
   @Column({ type: DataType.STRING, allowNull: false })
@@ -159,58 +112,14 @@ export class Project extends Model {
 
   @ApiProperty({
     description: 'Type of the project',
-    enum: [
-      'energy_and_environment',
-      'construction_and_infrastructure',
-      'agriculture_and_food',
-      'materials_and_minerals',
-      'finance_and_investment',
-      'technology_and_innovation',
-      'medicine_and_health',
-      'human_resource_development',
-      'manufacturing_and_automotive',
-      'electronics_and_retail',
-      'real_estate_and_urban_development',
-      'media_and_entertainment',
-      'tourism_and_services',
-      'society_and_community',
-    ],
+    enum: projectTypesArray,
     example: 'technology_and_innovation',
   })
   @Column({
-    type: DataType.ENUM(
-      'energy_and_environment',
-      'construction_and_infrastructure',
-      'agriculture_and_food',
-      'materials_and_minerals',
-      'finance_and_investment',
-      'technology_and_innovation',
-      'medicine_and_health',
-      'human_resource_development',
-      'manufacturing_and_automotive',
-      'electronics_and_retail',
-      'real_estate_and_urban_development',
-      'media_and_entertainment',
-      'tourism_and_services',
-      'society_and_community',
-    ),
+    type: DataType.ENUM(...projectTypesArray),
     allowNull: false,
   })
-  projectType:
-    | 'energy_and_environment'
-    | 'construction_and_infrastructure'
-    | 'agriculture_and_food'
-    | 'materials_and_minerals'
-    | 'finance_and_investment'
-    | 'technology_and_innovation'
-    | 'medicine_and_health'
-    | 'human_resource_development'
-    | 'manufacturing_and_automotive'
-    | 'electronics_and_retail'
-    | 'real_estate_and_urban_development'
-    | 'media_and_entertainment'
-    | 'tourism_and_services'
-    | 'society_and_community';
+  projectType: ProjectType;
 
   @ApiProperty({
     description: 'ID of the parent project',
@@ -339,4 +248,37 @@ export class Project extends Model {
   })
   @BelongsTo(() => User, 'ThirdApprovedByUserID')
   thirdApprovedByUser: User;
+
+  @ApiProperty({
+    description: 'Third approval date',
+    required: false,
+    example: '2024-01-25T09:15:00Z',
+    format: 'date-time',
+  })
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  rejectedDT: Date;
+
+  @ApiProperty({
+    description: 'ID of the user who third approved',
+    required: false,
+    example: '123e4567-e89b-12d3-a456-426614174000',
+    format: 'uuid',
+  })
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  rejectedByUserId: string;
+
+  @ApiProperty({
+    type: () => User,
+    description: 'User who third approved the project',
+    required: false,
+  })
+  @BelongsTo(() => User, 'RejectedByUserId')
+  rejectedByUser: User;
 }
