@@ -37,7 +37,12 @@ export class ProjectsController {
   async updateProjectStatus(
     @Param('projectId') projectId: string,
     @Body() updateProjectStatusDto: UpdateProjectStatusDto,
-  ) {}
+  ) {
+    return await this.projectsService.updateProjectStatus(
+      projectId,
+      updateProjectStatusDto,
+    );
+  }
 
   @Post('submit')
   @ApiOperation({ description: 'Submit a project' })
@@ -46,5 +51,7 @@ export class ProjectsController {
     description: 'Successfully submit a project',
     type: [Project],
   })
-  async submitProject(@Body() project: SubmitProjectDto) {}
+  async submitProject(@Body() project: SubmitProjectDto) {
+    return await this.projectsService.submitProject(project);
+  }
 }
