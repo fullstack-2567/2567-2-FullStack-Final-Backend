@@ -5,6 +5,7 @@ import { DatabaseModule } from './database/database.module';
 import { ConfigModule } from '@nestjs/config';
 import { NestMinioClientModule } from './nestminioclient/nestminioclient.module';
 import { ProjectsModule } from './projects/projects.module';
+import { ContentModule } from './content/content.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { ProjectsModule } from './projects/projects.module';
     DatabaseModule,
     NestMinioClientModule,
     ProjectsModule,
+    ContentModule,
   ],
   controllers: [AppController],
   providers: [AppService],
