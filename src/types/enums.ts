@@ -59,3 +59,9 @@ export type UserRole = (typeof userRolesArray)[number];
 
 export const userSexesArray = ['male', 'female', 'other'] as const;
 export type UserSex = (typeof userSexesArray)[number];
+
+export enum ReportType {
+  PROJECT = 'project',
+  E_LEARNING = 'elearning',
+}
+export const reportTypeArray = Object.values(ReportType);

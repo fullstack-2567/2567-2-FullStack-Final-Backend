@@ -1,4 +1,4 @@
-import { Model, Column, DataType, Table } from 'sequelize-typescript';
+import { Model, Column, DataType, Table, HasMany } from 'sequelize-typescript';
 import { ApiProperty } from '@nestjs/swagger';
 import {
   EducationLevel,
@@ -10,6 +10,7 @@ import {
   UserSex,
   userSexesArray,
 } from 'src/types/enums';
+import { ContentMap } from './content-map.entity';
 
 @Table({
   tableName: 'User',
@@ -127,4 +128,7 @@ export class User extends Model {
     type: DataType.STRING,
   })
   tel: string;
+
+  @HasMany(() => ContentMap , 'userId')
+  contentMaps: ContentMap[];
 }

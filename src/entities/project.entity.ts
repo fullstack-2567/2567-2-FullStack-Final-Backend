@@ -49,7 +49,7 @@ export class Project extends Model {
     type: () => User,
     description: 'User who submitted the project',
   })
-  @BelongsTo(() => User, 'SubmittedByUserID')
+  @BelongsTo(() => User, 'submittedByUserId')
   submittedByUser: User;
 
   @ApiProperty({
