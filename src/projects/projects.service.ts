@@ -26,6 +26,38 @@ export class ProjectsService {
     return projects;
   }
 
+  async getProjectById(projectId: string) {
+    const project = await this.projectRepository.findOne({
+      where: { projectId: projectId },
+      include: [
+        {
+          model: Project,
+          as: 'ChildProjects',
+        },
+      ],
+    });
+    if (!project) {
+      throw new NotFoundException('Project not found');
+    }
+    return project;
+  }
+
+  async getProjectsByUserId(userId: string) {
+    const projects = await this.projectRepository.findAll({
+      where: { submittedByUserId: userId },
+      include: [
+        {
+          model: Project,
+          as: 'ChildProjects',
+        },
+      ],
+    });
+    if (!projects) {
+      throw new NotFoundException('No projects found for this user');
+    }
+    return projects;
+  }
+
   async updateProjectStatus(
     projectId: string,
     updateProjectStatusDto: UpdateProjectStatusDto,
@@ -124,7 +156,7 @@ export class ProjectsService {
         return "User not found Please Login first";
         // await this.userRepository.create(userData); //for mockup if don't have user
       } else {
-        // Update user information
+        // Update user informat
         await this.userRepository.update(userData, {
           where: { userId: mockupUserId },
         });

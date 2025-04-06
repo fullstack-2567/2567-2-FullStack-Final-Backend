@@ -27,6 +27,28 @@ export class ProjectsController {
     return await this.projectsService.getAllProjects();
   }
 
+  @Get(':projectId')
+  @ApiOperation({ description: 'Get project by ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully retrieved project',
+    type: [Project],
+  })
+  async getProjectById(@Param('projectId') projectId: string) {
+    return await this.projectsService.getProjectById(projectId);
+  }
+
+  @Get('user-projects/:userId')
+  @ApiOperation({ description: 'Get projects by user ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully retrieved projects by user ID',
+    type: [Project],
+  })
+  async getProjectsByUserId(@Param('userId') userId: string) {
+    return await this.projectsService.getProjectsByUserId(userId);
+  }
+
   @Patch(':projectId/status')
   @ApiOperation({ description: 'Update project status' })
   @ApiResponse({
