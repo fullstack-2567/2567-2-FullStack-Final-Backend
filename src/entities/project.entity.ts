@@ -49,7 +49,7 @@ export class Project extends Model {
     type: () => User,
     description: 'User who submitted the project',
   })
-  @BelongsTo(() => User, 'SubmittedByUserID')
+  @BelongsTo(() => User, 'submittedByUserId')
   submittedByUser: User;
 
   @ApiProperty({
@@ -139,7 +139,10 @@ export class Project extends Model {
     description: 'Parent project details',
     required: false,
   })
-  @BelongsTo(() => Project, 'ParentProjectID')
+  @BelongsTo(() => Project, { 
+    foreignKey: 'parentProjectID', // ตรงนี้ต้องตรงกับชื่อคอลัมน์จริง (case-sensitive)
+    as: 'ParentProject' // ตั้งชื่อ alias สำหรับ association นี้
+  })
   parentProject: Project;
 
   @ApiProperty({
@@ -147,7 +150,10 @@ export class Project extends Model {
     description: 'Child projects',
     required: false,
   })
-  @HasMany(() => Project, 'ParentProjectID')
+  @HasMany(() => Project, { 
+    foreignKey: 'parentProjectID', 
+    as: 'ChildProjects' 
+  })
   childProjects: Project[];
 
   @ApiProperty({
@@ -180,7 +186,7 @@ export class Project extends Model {
     description: 'User who first approved the project',
     required: false,
   })
-  @BelongsTo(() => User, 'FirstApprovedByUserID')
+  @BelongsTo(() => User, 'firstApprovedByUserId')
   firstApprovedByUser: User;
 
   @ApiProperty({
@@ -213,7 +219,7 @@ export class Project extends Model {
     description: 'User who second approved the project',
     required: false,
   })
-  @BelongsTo(() => User, 'SecondApprovedByUserID')
+  @BelongsTo(() => User, 'secondApprovedByUserId')
   secondApprovedByUser: User;
 
   @ApiProperty({
@@ -246,7 +252,7 @@ export class Project extends Model {
     description: 'User who third approved the project',
     required: false,
   })
-  @BelongsTo(() => User, 'ThirdApprovedByUserID')
+  @BelongsTo(() => User, 'thirdApprovedByUserId')
   thirdApprovedByUser: User;
 
   @ApiProperty({
@@ -279,6 +285,6 @@ export class Project extends Model {
     description: 'User who third approved the project',
     required: false,
   })
-  @BelongsTo(() => User, 'RejectedByUserId')
+  @BelongsTo(() => User, 'rejectedByUserId')
   rejectedByUser: User;
 }
