@@ -1,8 +1,4 @@
-import {
-  Inject,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { SubmitProjectDto } from '../dto/submitProject.dto';
 import { UpdateProjectStatusDto } from '../dto/updateProjectStatus.dto';
@@ -11,7 +7,7 @@ import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { User } from '../entities/user.entity';
 import { InjectMinio } from 'nestjs-minio';
 import { Client } from 'minio';
-import { getObjectMetaData, putObjectFromBase64 } from '../utils/minio.utils';
+import { getPresignedUrl, putObjectFromBase64 } from '../utils/minio.utils';
 @Injectable()
 export class ProjectsService {
   constructor(
@@ -23,10 +19,12 @@ export class ProjectsService {
   async getAllProjects() {
     const projects = await this.projectRepository.findAll({
       include: [
-        {
-          model: Project,
-          as: 'ChildProjects',
-        },
+        'ChildProjects',
+        'submittedByUser',
+        'firstApprovedByUser',
+        'secondApprovedByUser',
+        'thirdApprovedByUser',
+        'rejectedByUser',
       ],
     });
     return projects;
@@ -36,26 +34,40 @@ export class ProjectsService {
     const project = await this.projectRepository.findOne({
       where: { projectId: projectId },
       include: [
-        {
-          model: Project,
-          as: 'ChildProjects',
-        },
+        'ChildProjects',
+        'submittedByUser',
+        'firstApprovedByUser',
+        'secondApprovedByUser',
+        'thirdApprovedByUser',
+        'rejectedByUser',
       ],
     });
     if (!project) {
       throw new NotFoundException('Project not found');
     }
-    return project;
+
+    const objectUrl = await getPresignedUrl(
+      this.minioClient,
+      'projects',
+      project.projectDescriptionFile,
+    );
+
+    return {
+      ...project.dataValues,
+      projectDescriptionFile: objectUrl,
+    };
   }
 
   async getProjectsByUserId(userId: string) {
     const projects = await this.projectRepository.findAll({
       where: { submittedByUserId: userId },
       include: [
-        {
-          model: Project,
-          as: 'ChildProjects',
-        },
+        'ChildProjects',
+        'submittedByUser',
+        'firstApprovedByUser',
+        'secondApprovedByUser',
+        'thirdApprovedByUser',
+        'rejectedByUser',
       ],
     });
     if (!projects) {
@@ -110,8 +122,20 @@ export class ProjectsService {
     }
 
     // บันทึกการเปลี่ยนแปลง
-    const updatedProject = await project.save();
-    return updatedProject;
+    await project.save();
+
+    // Reload the model with associations
+    return await this.projectRepository.findOne({
+      where: { projectId: projectId },
+      include: [
+        'ChildProjects',
+        'submittedByUser',
+        'firstApprovedByUser',
+        'secondApprovedByUser',
+        'thirdApprovedByUser',
+        'rejectedByUser',
+      ],
+    });
   }
 
   async submitProject(project: SubmitProjectDto) {
@@ -137,12 +161,26 @@ export class ProjectsService {
       'projects',
     );
 
-    const newProject = await this.projectRepository.create({
-      ...project,
-      submittedByUserId: mockupUserId,
-      projectDescriptionFile: fileName,
-    });
+    const objectUrl = await getPresignedUrl(
+      this.minioClient,
+      'projects',
+      fileName,
+    );
 
-    return newProject;
+    const newProject = await this.projectRepository.create(
+      {
+        ...project,
+        submittedByUserId: mockupUserId,
+        projectDescriptionFile: fileName,
+      },
+      {
+        include: ['ChildProjects', 'submittedByUser'],
+      },
+    );
+
+    return {
+      ...newProject.dataValues,
+      projectDescriptionFile: objectUrl,
+    };
   }
 }

@@ -56,3 +56,22 @@ export const putObjectFromBase64 = async (
     throw new InternalServerErrorException('Failed while upload file');
   }
 };
+
+export const getPresignedUrl = async (
+  minioClient: Client,
+  bucketName: 'projects' | 'pictures' | 'videos',
+  objectName: string,
+  expirySeconds: number = 3600, // Default 1 hour expiry
+): Promise<string> => {
+  try {
+    const url = await minioClient.presignedGetObject(
+      bucketName,
+      objectName,
+      expirySeconds,
+    );
+    return url;
+  } catch (error) {
+    console.error('Error generating presigned URL:', error);
+    throw new InternalServerErrorException('Failed to generate presigned URL');
+  }
+};

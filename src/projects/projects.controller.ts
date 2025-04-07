@@ -28,11 +28,14 @@ export class ProjectsController {
   }
 
   @Get(':projectId')
-  @ApiOperation({ description: 'Get project by ID' })
+  @ApiOperation({
+    description:
+      'Get project by ID, returns projectDescriptionFile as accessible url.',
+  })
   @ApiResponse({
     status: 200,
     description: 'Successfully retrieved project',
-    type: [Project],
+    type: Project,
   })
   async getProjectById(@Param('projectId') projectId: string) {
     return await this.projectsService.getProjectById(projectId);
@@ -50,11 +53,13 @@ export class ProjectsController {
   }
 
   @Patch(':projectId/status')
-  @ApiOperation({ description: 'Update project status' })
+  @ApiOperation({
+    description: 'Update project status',
+  })
   @ApiResponse({
     status: 200,
     description: 'Successfully update project status',
-    type: [Project],
+    type: Project,
   })
   async updateProjectStatus(
     @Param('projectId') projectId: string,
@@ -67,11 +72,14 @@ export class ProjectsController {
   }
 
   @Post('submit')
-  @ApiOperation({ description: 'Submit a project' })
+  @ApiOperation({
+    description:
+      'Submit a project, returns projectDescriptionFile as accessible url.',
+  })
   @ApiResponse({
     status: 200,
     description: 'Successfully submit a project',
-    type: [Project],
+    type: Project,
   })
   async submitProject(@Body() project: SubmitProjectDto) {
     return await this.projectsService.submitProject(project);
