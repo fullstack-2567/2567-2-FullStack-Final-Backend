@@ -1,4 +1,17 @@
 services:
+
+  backend:
+    image: 2567-2-fullstack-final-backend:v1
+    restart: always
+    env_file:
+      - .env-backend
+    ports:
+      - '7001:3000'
+    depends_on:
+      - db
+    volumes:
+      - ./backend:/app
+
   db:
     image: postgres
     restart: always
@@ -9,7 +22,21 @@ services:
     ports:
       - '4527:5432'
     volumes:
-      - db-data:/var/lib/postgresql/data
+      - . db-data:/var/lib/postgresql/data
+
+  minio:
+    image: minio/minio
+    command: server /data --console-address ":9001"
+    restart: always
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+    environment:
+      MINIO_ROOT_USER: fullstack-pj
+      MINIO_ROOT_PASSWORD: 95teIksIm9gP
+    volumes:
+      - ./minio:/data
+
 
 volumes:
   db-data:
