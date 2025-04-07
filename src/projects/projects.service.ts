@@ -1,16 +1,23 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { SubmitProjectDto } from '../dto/submitProject.dto';
 import { UpdateProjectStatusDto } from '../dto/updateProjectStatus.dto';
 import { Project } from '../entities/project.entity';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { User } from '../entities/user.entity';
-
+import { InjectMinio } from 'nestjs-minio';
+import { Client } from 'minio';
+import { getObjectMetaData, putObjectFromBase64 } from '../utils/minio.utils';
 @Injectable()
 export class ProjectsService {
   constructor(
     @InjectModel(Project) private readonly projectRepository: typeof Project,
     @InjectModel(User) private readonly userRepository: typeof User,
+    @InjectMinio() private readonly minioClient: Client,
   ) {}
 
   async getAllProjects() {
@@ -124,12 +131,17 @@ export class ProjectsService {
       }
     }
 
+    const fileName = await putObjectFromBase64(
+      this.minioClient,
+      project.projectDescriptionFile,
+      'projects',
+    );
+
     const newProject = await this.projectRepository.create({
       ...project,
       submittedByUserId: mockupUserId,
+      projectDescriptionFile: fileName,
     });
-    console.log('New project created:', newProject);
-    console.log('userData:', project.userInfo);
 
     return newProject;
   }
