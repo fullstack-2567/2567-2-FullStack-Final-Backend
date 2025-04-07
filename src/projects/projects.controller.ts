@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Req } from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import {
   ApiBearerAuth,
@@ -9,6 +9,7 @@ import {
 import { Project } from 'src/entities/project.entity';
 import { UpdateProjectStatusDto } from 'src/dto/updateProjectStatus.dto';
 import { SubmitProjectDto } from 'src/dto/submitProject.dto';
+import { Roles } from 'src/auth/decorators/roles.decorator';
 
 @ApiBearerAuth('accessToken')
 @ApiTags('projects')
@@ -16,6 +17,7 @@ import { SubmitProjectDto } from 'src/dto/submitProject.dto';
 export class ProjectsController {
   constructor(private readonly projectsService: ProjectsService) {}
 
+  @Roles('project-approver')
   @Get()
   @ApiOperation({ description: 'Get all projects' })
   @ApiResponse({
@@ -27,6 +29,7 @@ export class ProjectsController {
     return await this.projectsService.getAllProjects();
   }
 
+  @Roles('user')
   @Get(':projectId')
   @ApiOperation({
     description:
@@ -46,7 +49,8 @@ export class ProjectsController {
     return await this.projectsService.getProjectById(projectId);
   }
 
-  @Get('user-projects/:userId')
+  @Roles('user')
+  @Get('user-projects')
   @ApiOperation({ description: 'Get projects by user ID' })
   @ApiResponse({
     status: 200,
@@ -57,10 +61,13 @@ export class ProjectsController {
     status: 404,
     description: 'No projects found for this user',
   })
-  async getProjectsByUserId(@Param('userId') userId: string) {
-    return await this.projectsService.getProjectsByUserId(userId);
+  async getUserProjects(@Req() req) {
+    const user = req.user as { userId: string };
+    const userId = user.userId;
+    return await this.projectsService.getUserProjects(userId);
   }
 
+  @Roles('project-approver')
   @Patch(':projectId/status')
   @ApiOperation({
     description: 'Update project status',
@@ -79,15 +86,20 @@ export class ProjectsController {
     description: 'Project already fully approved',
   })
   async updateProjectStatus(
+    @Req() req,
     @Param('projectId') projectId: string,
     @Body() updateProjectStatusDto: UpdateProjectStatusDto,
   ) {
+    const user = req.user as { userId: string };
+    const userId = user.userId;
     return await this.projectsService.updateProjectStatus(
       projectId,
       updateProjectStatusDto,
+      userId,
     );
   }
 
+  @Roles('user')
   @Post('submit')
   @ApiOperation({
     description:
@@ -103,7 +115,9 @@ export class ProjectsController {
     status: 400,
     description: 'User not found.',
   })
-  async submitProject(@Body() project: SubmitProjectDto) {
-    return await this.projectsService.submitProject(project);
+  async submitProject(@Req() req, @Body() project: SubmitProjectDto) {
+    const user = req.user as { userId: string };
+    const userId = user.userId;
+    return await this.projectsService.submitProject(project, userId);
   }
 }
