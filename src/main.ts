@@ -3,6 +3,8 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { apiReference } from '@scalar/nestjs-api-reference';
+import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
+import { ConfigService } from '@nestjs/config';
 import { urlencoded, json } from 'express';
 
 async function bootstrap() {
@@ -10,11 +12,15 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
   app.enableCors();
+  const configService = app.get(ConfigService);
+  const jwtAuthGuard = app.get(JwtAuthGuard);
+  app.setGlobalPrefix('api');
+  app.useGlobalGuards(jwtAuthGuard);
 
   // request entity
   app.use(json({ limit: '50mb' }));
   app.use(urlencoded({ extended: true, limit: '50mb' }));
-
+  
   const config = new DocumentBuilder()
     .setTitle('API')
     .setDescription('API documentation')

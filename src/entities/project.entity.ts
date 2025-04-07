@@ -7,14 +7,17 @@ import {
   BelongsTo,
   HasMany,
 } from 'sequelize-typescript';
-import { User } from './user.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import {
   ProjectType,
   projectTypesArray,
   SDGType,
   sdgTypesArray,
+} from 'src/types/enums';
+import { User } from './user.entity';
+
 } from 'src/types/projects.enum';
+
 
 @Table({
   tableName: 'Project',
