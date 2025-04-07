@@ -10,7 +10,7 @@ import { InjectMinio } from 'nestjs-minio';
 import { Client } from 'minio';
 import * as stream from 'stream';
 import { getPresignedUrl, putObjectFromBase64 } from 'src/utils/minio.utils';
-import { ContentCategory } from 'src/types/enums';
+import { ContentCategory } from 'src/types/content.enum';
 
 // Set ffmpeg and ffprobe paths correctly
 ffmpeg.setFfmpegPath(ffmpegPath as unknown as string);

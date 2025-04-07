@@ -3,7 +3,7 @@ import { IsEnum } from 'class-validator';
 import {
   ProjectUpdateAction,
   projectUpdateActionsArray,
-} from 'src/types/enums';
+} from 'src/types/projects.enum';
 
 export class UpdateProjectStatusDto {
   @ApiProperty({

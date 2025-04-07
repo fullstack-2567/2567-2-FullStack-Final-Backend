@@ -1,6 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsBoolean, IsEnum, IsNotEmpty } from 'class-validator';
-import { contentCategoriesArray, ContentCategory } from 'src/types/enums';
+import {
+  contentCategoriesArray,
+  ContentCategory,
+} from 'src/types/content.enum';
 
 export class CreateContentDto {
   @ApiProperty({ description: 'Content name' })

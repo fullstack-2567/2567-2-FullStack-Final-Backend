@@ -14,7 +14,7 @@ import {
   projectTypesArray,
   SDGType,
   sdgTypesArray,
-} from 'src/types/enums';
+} from 'src/types/projects.enum';
 
 @Table({
   tableName: 'Project',

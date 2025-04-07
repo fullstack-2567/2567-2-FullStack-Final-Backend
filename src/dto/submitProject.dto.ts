@@ -1,7 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
-  IsBase64,
   IsEnum,
   IsNotEmpty,
   IsString,
@@ -12,15 +11,17 @@ import {
 import {
   EducationLevel,
   educationLevelsArray,
-  ProjectType,
-  projectTypesArray,
-  SDGType,
-  sdgTypesArray,
   UserPrefix,
   userPrefixesArray,
   UserSex,
   userSexesArray,
-} from 'src/types/enums';
+} from 'src/types/user.enum';
+import {
+  ProjectType,
+  projectTypesArray,
+  SDGType,
+  sdgTypesArray,
+} from 'src/types/projects.enum';
 
 export class SubmitProjectDto {
   @ApiProperty({
@@ -98,7 +99,9 @@ export class SubmitProjectDto {
   @IsEnum(projectTypesArray)
   projectType: ProjectType;
 
-  @ValidateIf(o => o.parentProjectID !== null && o.parentProjectID !== undefined)
+  @ValidateIf(
+    (o) => o.parentProjectID !== null && o.parentProjectID !== undefined,
+  )
   @ApiProperty({
     description: 'ID of the parent project',
     required: false,

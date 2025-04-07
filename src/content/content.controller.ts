@@ -12,7 +12,10 @@ import { ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
 import { Content } from 'src/entities/content.entitiy';
 import { UpdateContentDto } from 'src/dto/updateContent.dto';
 import { CreateContentDto } from 'src/dto/createContent.dto';
-import { contentCategoriesArray, ContentCategory } from 'src/types/enums';
+import {
+  contentCategoriesArray,
+  ContentCategory,
+} from 'src/types/content.enum';
 
 @Controller('content')
 export class ContentController {

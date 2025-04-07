@@ -7,7 +7,10 @@ import {
   BelongsTo,
 } from 'sequelize-typescript';
 import { ApiProperty } from '@nestjs/swagger';
-import { contentCategoriesArray, ContentCategory } from 'src/types/enums';
+import {
+  contentCategoriesArray,
+  ContentCategory,
+} from 'src/types/content.enum';
 import { User } from './user.entity';
 
 /**มี contentId

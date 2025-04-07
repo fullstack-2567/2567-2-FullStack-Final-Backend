@@ -9,7 +9,7 @@ import {
   userRolesArray,
   UserSex,
   userSexesArray,
-} from 'src/types/enums';
+} from 'src/types/user.enum';
 
 @Table({
   tableName: 'User',
