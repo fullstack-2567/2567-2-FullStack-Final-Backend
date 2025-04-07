@@ -36,17 +36,7 @@ export class ProjectsController {
     status: 200,
     description:
       'Successfully retrieved project with presigned URL for project description file',
-    schema: {
-      type: 'object',
-      properties: {
-        projectId: { type: 'string' },
-        projectDescriptionFile: {
-          type: 'string',
-          description: 'Presigned URL to access the project description file',
-        },
-        // Other project properties will be included automatically
-      },
-    },
+    type: Project,
   })
   @ApiResponse({
     status: 404,
@@ -107,17 +97,7 @@ export class ProjectsController {
     status: 200,
     description:
       'Successfully submit a project with presigned URL for project description file',
-    schema: {
-      type: 'object',
-      properties: {
-        projectId: { type: 'string' },
-        projectDescriptionFile: {
-          type: 'string',
-          description: 'Presigned URL to access the project description file',
-        },
-        // Other project properties will be included automatically
-      },
-    },
+    type: Project,
   })
   @ApiResponse({
     status: 400,
