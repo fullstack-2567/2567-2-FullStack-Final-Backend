@@ -42,10 +42,10 @@ export class AuthService {
       });
     }
   
-    const tokens = await this.generateTokens(user.id, user.email, user.role);
+    const tokens = await this.generateTokens(user.userId, user.email, user.role);
   
     // เก็บ refresh token ใหม่ (rotation)
-    await this.usersService.updateRefreshToken(user.id, tokens.refreshToken);
+    await this.usersService.updateRefreshToken(user.userId, tokens.refreshToken);
   
     return tokens;
   }
@@ -75,8 +75,8 @@ export class AuthService {
   }
 
   async handleGoogleLogin(user: User): Promise<TokensDto> {
-    const tokens = await this.generateTokens(user.id, user.email, user.role);
-    await this.usersService.updateRefreshToken(user.id, tokens.refreshToken);
+    const tokens = await this.generateTokens(user.userId, user.email, user.role);
+    await this.usersService.updateRefreshToken(user.userId, tokens.refreshToken);
     return tokens;
   }
 }

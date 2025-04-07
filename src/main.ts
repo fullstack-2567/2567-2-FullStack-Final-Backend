@@ -13,7 +13,7 @@ async function bootstrap() {
   app.enableCors();
   const configService = app.get(ConfigService);
   const jwtAuthGuard = app.get(JwtAuthGuard);
-  app.setGlobalPrefix(`${configService.get('CONTEXT_PATH')}`);
+  app.setGlobalPrefix('api');
   app.useGlobalGuards(jwtAuthGuard);
   const config = new DocumentBuilder()
     .setTitle('API')
