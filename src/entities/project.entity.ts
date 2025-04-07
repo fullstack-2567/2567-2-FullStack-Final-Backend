@@ -14,11 +14,7 @@ import {
   projectTypesArray,
   SDGType,
   sdgTypesArray,
-<<<<<<< HEAD
-} from 'src/types/enums';
-=======
 } from 'src/types/projects.enum';
->>>>>>> main
 
 @Table({
   tableName: 'Project',
@@ -53,12 +49,6 @@ export class Project extends Model {
     type: () => User,
     description: 'User who submitted the project',
   })
-<<<<<<< HEAD
-  @BelongsTo(() => User, 'SubmittedByUserID')
-  submittedByUser: User;
-
-  @ApiProperty({
-=======
   @BelongsTo(() => User, 'submittedByUserId')
   submittedByUser: User;
 
@@ -71,7 +61,6 @@ export class Project extends Model {
   submittedDT: Date;
 
   @ApiProperty({
->>>>>>> main
     description: 'Thai name of the project',
     example: 'โครงการพัฒนาระบบจัดการข้อมูล',
     minLength: 1,
@@ -158,14 +147,10 @@ export class Project extends Model {
     description: 'Parent project details',
     required: false,
   })
-<<<<<<< HEAD
-  @BelongsTo(() => Project, 'ParentProjectID')
-=======
   @BelongsTo(() => Project, {
     foreignKey: 'parentProjectID', // ตรงนี้ต้องตรงกับชื่อคอลัมน์จริง (case-sensitive)
     as: 'ParentProject', // ตั้งชื่อ alias สำหรับ association นี้
   })
->>>>>>> main
   parentProject: Project;
 
   @ApiProperty({
@@ -173,14 +158,10 @@ export class Project extends Model {
     description: 'Child projects',
     required: false,
   })
-<<<<<<< HEAD
-  @HasMany(() => Project, 'ParentProjectID')
-=======
   @HasMany(() => Project, {
     foreignKey: 'parentProjectID',
     as: 'ChildProjects',
   })
->>>>>>> main
   childProjects: Project[];
 
   @ApiProperty({
@@ -213,11 +194,7 @@ export class Project extends Model {
     description: 'User who first approved the project',
     required: false,
   })
-<<<<<<< HEAD
-  @BelongsTo(() => User, 'FirstApprovedByUserID')
-=======
   @BelongsTo(() => User, 'firstApprovedByUserId')
->>>>>>> main
   firstApprovedByUser: User;
 
   @ApiProperty({
@@ -250,11 +227,7 @@ export class Project extends Model {
     description: 'User who second approved the project',
     required: false,
   })
-<<<<<<< HEAD
-  @BelongsTo(() => User, 'SecondApprovedByUserID')
-=======
   @BelongsTo(() => User, 'secondApprovedByUserId')
->>>>>>> main
   secondApprovedByUser: User;
 
   @ApiProperty({
@@ -287,11 +260,7 @@ export class Project extends Model {
     description: 'User who third approved the project',
     required: false,
   })
-<<<<<<< HEAD
-  @BelongsTo(() => User, 'ThirdApprovedByUserID')
-=======
   @BelongsTo(() => User, 'thirdApprovedByUserId')
->>>>>>> main
   thirdApprovedByUser: User;
 
   @ApiProperty({
@@ -324,12 +293,6 @@ export class Project extends Model {
     description: 'User who third approved the project',
     required: false,
   })
-<<<<<<< HEAD
-  @BelongsTo(() => User, 'RejectedByUserId')
-  rejectedByUser: User;
-  status: string;
-=======
   @BelongsTo(() => User, 'rejectedByUserId')
   rejectedByUser: User;
->>>>>>> main
 }

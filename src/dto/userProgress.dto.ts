@@ -1,4 +1,10 @@
-import { IsUUID, IsString, IsNumber, IsDateString, IsBoolean } from 'class-validator';
+import {
+  IsUUID,
+  IsString,
+  IsNumber,
+  IsDateString,
+  IsBoolean,
+} from 'class-validator';
 
 export class UserProgressItemDto {
   @IsUUID()
@@ -29,9 +35,6 @@ export class UserProgressDto {
 
   @IsNumber()
   in_progress_contents: number;
-
-  @IsNumber()
-  average_progress: number;
 
   items: UserProgressItemDto[];
 }

@@ -1,4 +1,11 @@
-import { Table, Column, Model, DataType, ForeignKey, BelongsTo } from 'sequelize-typescript';
+import {
+  Table,
+  Column,
+  Model,
+  DataType,
+  ForeignKey,
+  BelongsTo,
+} from 'sequelize-typescript';
 import { ApiProperty } from '@nestjs/swagger';
 import { User } from './user.entity';
 
@@ -51,19 +58,7 @@ export class ContentMaps extends Model {
     type: DataType.DATE,
     defaultValue: DataType.NOW,
   })
-  enrollAt: Date;
-
-  @ApiProperty({
-    description: 'Progress of the content',
-    example: 0,
-    type: Number,
-  })
-  @Column({
-    type: DataType.INTEGER,
-    allowNull: false,
-    defaultValue: 0,
-  })
-  progress: number;
+  enrolledDT: Date;
 
   @ApiProperty({
     description: 'Date when the user completed the content',
@@ -72,5 +67,5 @@ export class ContentMaps extends Model {
     nullable: true,
   })
   @Column(DataType.DATE)
-  completeAt: Date | null;
+  completedDT?: Date;
 }

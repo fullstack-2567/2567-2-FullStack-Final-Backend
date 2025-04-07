@@ -11,6 +11,7 @@ import { Client } from 'minio';
 import * as stream from 'stream';
 import { getPresignedUrl, putObjectFromBase64 } from 'src/utils/minio.utils';
 import { ContentCategory } from 'src/types/content.enum';
+import { ContentMaps } from 'src/entities/content-maps.entity';
 
 // Set ffmpeg and ffprobe paths correctly
 ffmpeg.setFfmpegPath(ffmpegPath as unknown as string);
@@ -20,13 +21,15 @@ ffmpeg.setFfprobePath(ffprobePath.path);
 export class ContentService {
   constructor(
     @InjectModel(Content) private readonly contentRepository: typeof Content,
+    @InjectModel(ContentMaps)
+    private readonly contentMapsRepository: typeof ContentMaps,
     @InjectMinio() private readonly minioClient: Client,
   ) {}
 
   //get all contents
   async getAllContents() {
     const contents = await this.contentRepository.findAll({
-      order: [['updatedAt', 'DESC']],
+      order: [['updatedDT', 'DESC']],
       include: ['createdByUser'],
     });
     return contents;
@@ -161,5 +164,16 @@ export class ContentService {
       contentVideo: videoObjectUrl,
       contentThumbnail: thumbnailObjectUrl,
     };
+  }
+
+  async enrollContent(contentId: string) {
+    const mockupUserId = '123e4567-e89b-12d3-a456-426614174001';
+
+    const contentMap = await this.contentMapsRepository.create({
+      userId: mockupUserId,
+      contentId: contentId,
+    });
+
+    return contentMap;
   }
 }

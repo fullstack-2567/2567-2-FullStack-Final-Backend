@@ -1,38 +1,18 @@
 import { ApiProperty } from '@nestjs/swagger';
-<<<<<<< HEAD
 import {
-  IsBase64,
-=======
-import { Type } from 'class-transformer';
-import {
->>>>>>> main
   IsEnum,
   IsNotEmpty,
+  IsOptional,
   IsString,
   IsUUID,
-<<<<<<< HEAD
-=======
-  IsDate,
-  ValidateIf,
->>>>>>> main
 } from 'class-validator';
 import {
   EducationLevel,
   educationLevelsArray,
-<<<<<<< HEAD
-  ProjectType,
-  projectTypesArray,
-  SDGType,
-  sdgTypesArray,
-=======
->>>>>>> main
   UserPrefix,
   userPrefixesArray,
   UserSex,
   userSexesArray,
-<<<<<<< HEAD
-} from 'src/types/enums';
-=======
 } from 'src/types/user.enum';
 import {
   ProjectType,
@@ -40,7 +20,6 @@ import {
   SDGType,
   sdgTypesArray,
 } from 'src/types/projects.enum';
->>>>>>> main
 
 export class SubmitProjectDto {
   @ApiProperty({
@@ -78,14 +57,8 @@ export class SubmitProjectDto {
     example: '2024-01-01',
     format: 'date',
   })
-<<<<<<< HEAD
   @IsString()
   @IsNotEmpty()
-=======
-  @IsDate()
-  @IsNotEmpty()
-  @Type(() => Date)
->>>>>>> main
   startDate: Date;
 
   @ApiProperty({
@@ -93,14 +66,8 @@ export class SubmitProjectDto {
     example: '2024-12-31',
     format: 'date',
   })
-<<<<<<< HEAD
   @IsString()
   @IsNotEmpty()
-=======
-  @IsDate()
-  @IsNotEmpty()
-  @Type(() => Date)
->>>>>>> main
   endDate: Date;
 
   @ApiProperty({
@@ -128,12 +95,6 @@ export class SubmitProjectDto {
   @IsEnum(projectTypesArray)
   projectType: ProjectType;
 
-<<<<<<< HEAD
-=======
-  @ValidateIf(
-    (o) => o.parentProjectID !== null && o.parentProjectID !== undefined,
-  )
->>>>>>> main
   @ApiProperty({
     description: 'ID of the parent project',
     required: false,
@@ -141,11 +102,8 @@ export class SubmitProjectDto {
     format: 'uuid',
   })
   @IsUUID()
-<<<<<<< HEAD
-  parentProjectID: string;
-=======
-  parentProjectID?: string | null;
->>>>>>> main
+  @IsOptional()
+  parentProjectID?: string;
 
   @ApiProperty({
     description:
@@ -191,6 +149,7 @@ export class SubmitProjectDto {
       },
     }),
   })
+  @IsOptional()
   userInfo?: {
     prefix: UserPrefix;
     sex: UserSex;

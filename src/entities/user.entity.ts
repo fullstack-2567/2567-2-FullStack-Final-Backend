@@ -9,19 +9,11 @@ import {
   userRolesArray,
   UserSex,
   userSexesArray,
-<<<<<<< HEAD
-} from 'src/types/enums';
-
-@Table({
-  tableName: 'User',
-  timestamps: false, 
-=======
 } from 'src/types/user.enum';
 
 @Table({
   tableName: 'User',
   timestamps: false,
->>>>>>> main
 })
 export class User extends Model {
   @ApiProperty({
@@ -58,7 +50,7 @@ export class User extends Model {
     format: 'date-time',
   })
   @Column({ type: DataType.DATE, defaultValue: DataType.NOW })
-  updatedAT: Date;
+  updatedDT: Date;
 
   @ApiProperty({
     description: 'Role of the user',
@@ -135,17 +127,4 @@ export class User extends Model {
     type: DataType.STRING,
   })
   tel: string;
-<<<<<<< HEAD
-
-  @ApiProperty({
-    description: 'User status',
-    example: true,
-  })
-  @Column({
-    type: DataType.BOOLEAN,
-    defaultValue: true,
-  })
-  active: boolean; // using in get user status
-=======
->>>>>>> main
 }

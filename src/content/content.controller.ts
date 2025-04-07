@@ -16,6 +16,7 @@ import {
   contentCategoriesArray,
   ContentCategory,
 } from 'src/types/content.enum';
+import { ContentMaps } from 'src/entities/content-maps.entity';
 
 @Controller('content')
 export class ContentController {
@@ -96,5 +97,16 @@ export class ContentController {
   })
   async getContentById(@Param('contentId') contentId: string) {
     return await this.contentService.getContentById(contentId);
+  }
+
+  @Post('enroll/:contentId')
+  @ApiOperation({ description: 'Enroll content' })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully enroll content',
+    type: ContentMaps,
+  })
+  async enrollContent(@Param('contentId') contentId: string) {
+    return await this.contentService.enrollContent(contentId);
   }
 }
