@@ -36,8 +36,7 @@ export class ContentService {
   }
 
   //create content
-  async createContent(createContentDto: CreateContentDto) {
-    const mockupUserId = '123e4567-e89b-12d3-a456-426614174000';
+  async createContent(createContentDto: CreateContentDto, userId: string) {
     const { contentVideo, contentThumbnail } = createContentDto;
 
     const videoObjectName = await putObjectFromBase64(
@@ -61,7 +60,7 @@ export class ContentService {
         contentVideo: videoObjectName,
         contentThumbnail: thumbnailObjectName,
         videoDuration: videoDuration,
-        createdByUserId: mockupUserId,
+        createdByUserId: userId,
       },
       {
         include: ['createdByUser'],

@@ -36,6 +36,7 @@ export class ContentController {
   }
 
   //create content
+  @Roles('admin')
   @Post('create')
   @ApiOperation({ description: 'Create content' })
   @ApiResponse({
@@ -43,8 +44,10 @@ export class ContentController {
     description: 'Successfully create content',
     type: Content,
   })
-  async createContent(@Body() createContentDto: CreateContentDto) {
-    return await this.contentService.createContent(createContentDto);
+  async createContent(@Req() req, @Body() createContentDto: CreateContentDto) {
+    const user = req.user as { userId: string };
+    const userId = user.userId;
+    return await this.contentService.createContent(createContentDto, userId);
   }
 
   //update content
