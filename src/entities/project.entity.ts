@@ -53,6 +53,14 @@ export class Project extends Model {
   submittedByUser: User;
 
   @ApiProperty({
+    description: 'Date and time when the project was submitted',
+    example: '2024-01-01T00:00:00Z',
+    format: 'date-time',
+  })
+  @Column({ type: DataType.DATE, defaultValue: DataType.NOW })
+  submittedDT: Date;
+
+  @ApiProperty({
     description: 'Thai name of the project',
     example: 'โครงการพัฒนาระบบจัดการข้อมูล',
     minLength: 1,
@@ -139,9 +147,9 @@ export class Project extends Model {
     description: 'Parent project details',
     required: false,
   })
-  @BelongsTo(() => Project, { 
+  @BelongsTo(() => Project, {
     foreignKey: 'parentProjectID', // ตรงนี้ต้องตรงกับชื่อคอลัมน์จริง (case-sensitive)
-    as: 'ParentProject' // ตั้งชื่อ alias สำหรับ association นี้
+    as: 'ParentProject', // ตั้งชื่อ alias สำหรับ association นี้
   })
   parentProject: Project;
 
@@ -150,9 +158,9 @@ export class Project extends Model {
     description: 'Child projects',
     required: false,
   })
-  @HasMany(() => Project, { 
-    foreignKey: 'parentProjectID', 
-    as: 'ChildProjects' 
+  @HasMany(() => Project, {
+    foreignKey: 'parentProjectID',
+    as: 'ChildProjects',
   })
   childProjects: Project[];
 

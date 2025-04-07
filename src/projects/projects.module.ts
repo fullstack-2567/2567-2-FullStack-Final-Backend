@@ -8,6 +8,6 @@ import { User } from 'src/entities/user.entity';
 @Module({
   controllers: [ProjectsController],
   providers: [ProjectsService],
-  imports: [SequelizeModule.forFeature([Project]), SequelizeModule.forFeature([User])],
+  imports: [SequelizeModule.forFeature([Project, User])],
 })
 export class ProjectsModule {}
