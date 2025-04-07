@@ -79,4 +79,16 @@ export class AuthService {
     await this.usersService.updateRefreshToken(user.userId, tokens.refreshToken);
     return tokens;
   }
+
+  async getUserInfo(userId: string): Promise<User> {
+    const user = await this.usersService.findById(userId);
+    if (!user) {
+      throw new ForbiddenException({
+        status: 'error',
+        message: 'User not found',
+        code: AuthErrorCode.AUTH_USER_NOT_FOUND,
+      });
+    }
+    return user;
+  }
 }
