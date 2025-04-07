@@ -5,25 +5,15 @@ export class UpdateContentDto {
   @ApiProperty({ description: 'Content name' })
   @IsString()
   @IsOptional()
-  content_name?: string;
-
-  @ApiProperty({ description: 'Content thumbnail (S3 Link)' })
-  @IsUrl()
-  @IsOptional()
-  content_thumbnail?: string;
-
-  @ApiProperty({ description: 'Content video link (S3 Link)' })
-  @IsUrl()
-  @IsOptional()
-  content_video_link?: string;
+  contentName?: string;
 
   @ApiProperty({ description: 'Content category' })
   @IsString()
   @IsOptional()
-  content_category?: string;
+  contentCategory?: string;
 
   @ApiProperty({ description: 'Content is public' })
   @IsBoolean()
   @IsOptional()
-  is_public?: boolean;
+  isPublic?: boolean;
 }

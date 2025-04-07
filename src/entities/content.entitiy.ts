@@ -1,6 +1,14 @@
-import { Model, Column, DataType, Table } from 'sequelize-typescript';
+import {
+  Model,
+  Column,
+  DataType,
+  Table,
+  ForeignKey,
+  BelongsTo,
+} from 'sequelize-typescript';
 import { ApiProperty } from '@nestjs/swagger';
 import { contentCategoriesArray, ContentCategory } from 'src/types/enums';
+import { User } from './user.entity';
 
 /**มี contentId
  * contentName
@@ -15,7 +23,7 @@ import { contentCategoriesArray, ContentCategory } from 'src/types/enums';
  */
 @Table({
   tableName: 'Content',
-  timestamps: true,
+  timestamps: false,
 })
 export class Content extends Model {
   @ApiProperty({
@@ -66,25 +74,25 @@ export class Content extends Model {
   contentCategory: ContentCategory;
 
   @ApiProperty({
-    description: 'Thumbnail image URL (S3 link)',
-    example: 'https://s3.amazonaws.com/bucket/thumbnail.jpg',
+    description: 'Thumbnail image file name in storage',
+    example: '1232f565-a106-4160-b6d0-9c859877ce9a.jpg',
   })
   @Column({ type: DataType.STRING, allowNull: false })
   contentThumbnail: string;
 
   @ApiProperty({
-    description: 'Video file URL (S3 link)',
-    example: 'https://s3.amazonaws.com/bucket/video.mp4',
+    description: 'Video file name in storage',
+    example: '1232f565-a106-4160-b6d0-9c859877ce9a.mp4',
   })
   @Column({ type: DataType.STRING, allowNull: false })
-  contentVideoLink: string;
+  contentVideo: string;
 
-  @ApiProperty({ example: '00:45:32', description: 'Video duration' })
+  @ApiProperty({ example: 60, description: 'Video duration in seconds' })
   @Column({
-    type: DataType.STRING,
+    type: DataType.INTEGER,
     allowNull: false,
   })
-  videoDuration: string;
+  videoDuration: number;
 
   @ApiProperty({
     description: 'Is the content publicly available',
@@ -92,6 +100,25 @@ export class Content extends Model {
   })
   @Column({ type: DataType.BOOLEAN, defaultValue: false })
   isPublic: boolean;
+
+  @ApiProperty({
+    description: 'ID of the user who created the content',
+    example: '123e4567-e89b-12d3-a456-426614174000',
+    format: 'uuid',
+  })
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.UUID,
+    allowNull: false,
+  })
+  createdByUserId: string;
+
+  @ApiProperty({
+    type: () => User,
+    description: 'User who created the content',
+  })
+  @BelongsTo(() => User, 'createdByUserId')
+  createdByUser: User;
 
   @ApiProperty({
     description: 'Creation date of the content',
