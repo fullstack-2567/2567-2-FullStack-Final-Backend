@@ -33,11 +33,16 @@ Create a `.env` file in the root directory with the following variables:
 
 ```env
 # Database Configuration
-DATABASE_USERNAME=your_username
-DATABASE_PASSWORD=your_password
-DATABASE_NAME=your_database_name
-DATABASE_HOST=localhost
+DATABASE_HOST='localhost'
 DATABASE_PORT=4527
+DATABASE_USERNAME=your_username
+DATABASE_PASSWORD=super_secure_password
+DATABASE_NAME='project_db'
+JWT_SECRET=super_secure_secret
+MINIO_ENDPOINT=ask_me
+MINIO_PORT=ask_me
+MINIO_ACCESS_KEY=ask_me
+MINIO_SECRET_KEY=ask_me
 ```
 
 ## Running with Docker
@@ -46,7 +51,7 @@ DATABASE_PORT=4527
 
 2. Start the database container:
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 This will start a PostgreSQL database container with the following configuration:
@@ -56,7 +61,7 @@ This will start a PostgreSQL database container with the following configuration
 
 To stop the containers:
 ```bash
-docker-compose down
+docker compose down
 ```
 
 ## Running the Application
@@ -75,7 +80,9 @@ npm run start:dev
 
 The application should now be running and connected to the PostgreSQL database.
 Access the application at `http://localhost:3000/`
-Access the Swagger UI at `http://localhost:3000/api`
+Access Open API json at `http://localhost:3000/openapi.json`
+Access Scalar API Reference at `http://localhost:3000/reference`,
+or the Swagger UI at `http://localhost:3000/api`
 
 ## Compile and run the project
 

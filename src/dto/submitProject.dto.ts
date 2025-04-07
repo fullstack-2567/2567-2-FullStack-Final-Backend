@@ -1,23 +1,27 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import {
-  IsBase64,
   IsEnum,
   IsNotEmpty,
   IsString,
   IsUUID,
+  IsDate,
+  ValidateIf,
 } from 'class-validator';
 import {
   EducationLevel,
   educationLevelsArray,
-  ProjectType,
-  projectTypesArray,
-  SDGType,
-  sdgTypesArray,
   UserPrefix,
   userPrefixesArray,
   UserSex,
   userSexesArray,
-} from 'src/types/enums';
+} from 'src/types/user.enum';
+import {
+  ProjectType,
+  projectTypesArray,
+  SDGType,
+  sdgTypesArray,
+} from 'src/types/projects.enum';
 
 export class SubmitProjectDto {
   @ApiProperty({
@@ -55,8 +59,9 @@ export class SubmitProjectDto {
     example: '2024-01-01',
     format: 'date',
   })
-  @IsString()
+  @IsDate()
   @IsNotEmpty()
+  @Type(() => Date)
   startDate: Date;
 
   @ApiProperty({
@@ -64,8 +69,9 @@ export class SubmitProjectDto {
     example: '2024-12-31',
     format: 'date',
   })
-  @IsString()
+  @IsDate()
   @IsNotEmpty()
+  @Type(() => Date)
   endDate: Date;
 
   @ApiProperty({
@@ -93,6 +99,9 @@ export class SubmitProjectDto {
   @IsEnum(projectTypesArray)
   projectType: ProjectType;
 
+  @ValidateIf(
+    (o) => o.parentProjectID !== null && o.parentProjectID !== undefined,
+  )
   @ApiProperty({
     description: 'ID of the parent project',
     required: false,
@@ -100,7 +109,7 @@ export class SubmitProjectDto {
     format: 'uuid',
   })
   @IsUUID()
-  parentProjectID: string;
+  parentProjectID?: string | null;
 
   @ApiProperty({
     description:

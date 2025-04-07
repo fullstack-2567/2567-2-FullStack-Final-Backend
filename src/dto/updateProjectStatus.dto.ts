@@ -3,7 +3,7 @@ import { IsEnum } from 'class-validator';
 import {
   ProjectUpdateAction,
   projectUpdateActionsArray,
-} from 'src/types/enums';
+} from 'src/types/projects.enum';
 
 export class UpdateProjectStatusDto {
   @ApiProperty({
@@ -14,4 +14,11 @@ export class UpdateProjectStatusDto {
   })
   @IsEnum(projectUpdateActionsArray)
   action: ProjectUpdateAction;
+
+  @ApiProperty({
+    description: 'User ID of the approver performing the action',
+    example: '123e4567-e89b-12d3-a456-426614174000',
+    format: 'uuid',
+  })
+  approverId: string;
 }

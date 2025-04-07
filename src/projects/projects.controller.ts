@@ -27,12 +27,56 @@ export class ProjectsController {
     return await this.projectsService.getAllProjects();
   }
 
+  @Get(':projectId')
+  @ApiOperation({
+    description:
+      'Get project by ID, returns projectDescriptionFile as accessible url.',
+  })
+  @ApiResponse({
+    status: 200,
+    description:
+      'Successfully retrieved project with presigned URL for project description file',
+    type: Project,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Project not found',
+  })
+  async getProjectById(@Param('projectId') projectId: string) {
+    return await this.projectsService.getProjectById(projectId);
+  }
+
+  @Get('user-projects/:userId')
+  @ApiOperation({ description: 'Get projects by user ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully retrieved projects by user ID',
+    type: [Project],
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No projects found for this user',
+  })
+  async getProjectsByUserId(@Param('userId') userId: string) {
+    return await this.projectsService.getProjectsByUserId(userId);
+  }
+
   @Patch(':projectId/status')
-  @ApiOperation({ description: 'Update project status' })
+  @ApiOperation({
+    description: 'Update project status',
+  })
   @ApiResponse({
     status: 200,
     description: 'Successfully update project status',
-    type: [Project],
+    type: Project,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Project not found',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Project already fully approved',
   })
   async updateProjectStatus(
     @Param('projectId') projectId: string,
@@ -45,11 +89,19 @@ export class ProjectsController {
   }
 
   @Post('submit')
-  @ApiOperation({ description: 'Submit a project' })
+  @ApiOperation({
+    description:
+      'Submit a project, returns projectDescriptionFile as accessible url.',
+  })
   @ApiResponse({
     status: 200,
-    description: 'Successfully submit a project',
-    type: [Project],
+    description:
+      'Successfully submit a project with presigned URL for project description file',
+    type: Project,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'User not found.',
   })
   async submitProject(@Body() project: SubmitProjectDto) {
     return await this.projectsService.submitProject(project);
