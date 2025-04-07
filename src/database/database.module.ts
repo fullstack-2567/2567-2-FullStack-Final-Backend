@@ -13,7 +13,7 @@ import { User } from 'src/entities/user.entity';
         username: process.env.DATABASE_USERNAME,
         password: process.env.DATABASE_PASSWORD,
         database: process.env.DATABASE_NAME,
-        models: [Project, User],
+        models: [User, Project, Content, UserContentReport],
         synchronize: true, // don't have to create table by yourself *DON'T use in production*
       }),
     }),
