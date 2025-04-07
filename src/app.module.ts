@@ -7,7 +7,7 @@ import { NestMinioClientModule } from './nestminioclient/nestminioclient.module'
 import { ProjectsModule } from './projects/projects.module';
 import { AuthModule } from './auth/auth.module';  
 import { UsersModule } from './users/users.module'
-
+import { ContentModule } from './content/content.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -18,6 +18,7 @@ import { UsersModule } from './users/users.module'
     ProjectsModule,
     AuthModule,  
     UsersModule, 
+    ContentModule,
   ],
   controllers: [AppController],
   providers: [AppService],
