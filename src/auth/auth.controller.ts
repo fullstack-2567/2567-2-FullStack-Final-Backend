@@ -1,17 +1,7 @@
-import { 
-  Controller, 
-  Get, 
-  Post, 
-  Req, 
-  Res,
-  UseGuards,
-  HttpStatus,
-  HttpCode,
-  Body,
-  BadRequestException,
-  UnauthorizedException,
+import {
+  Controller, Get, Post, Req, Res, UseGuards,
+  HttpStatus, HttpCode, Body, BadRequestException, UnauthorizedException,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
@@ -21,7 +11,17 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { VerifyTokenResponse } from './interfaces/verify-token-response.interface';
 import { AuthErrorCode } from './constants/auth-error-code.enum';
+import { AuthGuard } from '@nestjs/passport';
 
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiBody,
+} from '@nestjs/swagger';
+
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -30,6 +30,11 @@ export class AuthController {
     private authService: AuthService
   ) {}
 
+
+
+  @ApiOperation({ summary: 'Logout current user' })
+  @ApiBearerAuth()
+  @ApiResponse({ status: 200, description: 'Logged out successfully' })
   @Post('logout')
   @HttpCode(HttpStatus.OK)
   async logout(@Req() req: Request) {
@@ -38,6 +43,9 @@ export class AuthController {
     return { message: 'Logged out successfully' };
   }
 
+  @ApiOperation({ summary: 'Refresh access token using refresh token' })
+  @ApiBearerAuth()
+  @ApiResponse({ status: 200, description: 'New tokens returned' })
   @UseGuards(JwtRefreshGuard)
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
@@ -47,11 +55,15 @@ export class AuthController {
   }
 
   @Public()
+  @ApiOperation({ summary: 'Initiate Google OAuth login' })
+  @ApiResponse({ status: 302, description: 'Redirect to Google login page' })
   @Get('google')
   @UseGuards(AuthGuard('google'))
   googleAuth() {}
 
   @Public()
+  @ApiOperation({ summary: 'Handle Google OAuth callback' })
+  @ApiResponse({ status: 302, description: 'Redirects back to frontend with cookie' })
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
   async googleAuthCallback(@Req() req: Request, @Res() res: Response) {
@@ -61,20 +73,26 @@ export class AuthController {
       httpOnly: true,
       secure: false,
       sameSite: 'strict',
-      maxAge: 15 * 60 * 1000,
+      maxAge: 15 * 60 * 1000, // 15 minutes
     });
-  
+
     res.cookie('refresh_token', tokens.refreshToken, {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
-  
+
     return res.redirect(`${this.configService.get('FRONTEND_URL')}`);
   }
 
   @Public()
+  @ApiOperation({ summary: 'Verify access token validity' })
+  @ApiBody({ type: VerifyTokenDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns token validity, user ID, and expiry',
+  })
   @Post('verify')
   async verifyToken(@Body() body: VerifyTokenDto): Promise<VerifyTokenResponse> {
     try {
@@ -112,7 +130,6 @@ export class AuthController {
         },
       };
     } catch (err: any) {
-      // Token malformed / invalid
       if (err?.name === 'JsonWebTokenError') {
         throw new UnauthorizedException({
           status: 'error',
@@ -121,7 +138,6 @@ export class AuthController {
         });
       }
 
-      // Token expired
       if (err?.name === 'TokenExpiredError') {
         throw new UnauthorizedException({
           status: 'error',
@@ -130,7 +146,6 @@ export class AuthController {
         });
       }
 
-      // Default fallback
       throw new UnauthorizedException({
         status: 'error',
         message: 'Authentication failed',
@@ -138,5 +153,4 @@ export class AuthController {
       });
     }
   }
-  
 }

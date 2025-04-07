@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { UsersService } from '../users/users.service';
 import { User } from '../users/models/user.model';
+import { AuthErrorCode } from './constants/auth-error-code.enum';
 
 export interface TokensDto {
   accessToken: string;
@@ -23,17 +24,29 @@ export class AuthService {
 
   async refreshTokens(userId: string, refreshToken: string): Promise<TokensDto> {
     const user = await this.usersService.findById(userId);
-
+  
     if (!user || !user.refreshToken) {
-      throw new ForbiddenException('Access denied');
+      throw new ForbiddenException({
+        status: 'error',
+        message: 'User not found or no refresh token',
+        code: AuthErrorCode.AUTH_REFRESH_INVALID,
+      });
     }
-
+  
+    // ตรวจ refresh token ว่าตรงกับใน DB
     if (user.refreshToken !== refreshToken) {
-      throw new ForbiddenException('Access denied');
+      throw new ForbiddenException({
+        status: 'error',
+        message: 'Invalid refresh token',
+        code: AuthErrorCode.AUTH_REFRESH_INVALID,
+      });
     }
-
+  
     const tokens = await this.generateTokens(user.id, user.email, user.role);
+  
+    // เก็บ refresh token ใหม่ (rotation)
     await this.usersService.updateRefreshToken(user.id, tokens.refreshToken);
+  
     return tokens;
   }
 
