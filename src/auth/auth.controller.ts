@@ -8,6 +8,8 @@ import {
   HttpStatus,
   HttpCode,
   Body,
+  BadRequestException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Request, Response } from 'express';
@@ -17,6 +19,8 @@ import { Public } from './decorators/public.decorator';
 import { VerifyTokenDto } from './dto/verify-token.dto';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { VerifyTokenResponse } from './interfaces/verify-token-response.interface';
+import { AuthErrorCode } from './constants/auth-error-code.enum';
 
 @Controller('auth')
 export class AuthController {
@@ -67,37 +71,71 @@ export class AuthController {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
   
-    return res.redirect('http://localhost/dashboard.php');
+    return res.redirect(`${this.configService.get('FRONTEND_URL')}`);
   }
 
   @Public()
   @Post('verify')
-  async verifyToken(@Body() body: VerifyTokenDto) {
+  async verifyToken(@Body() body: VerifyTokenDto): Promise<VerifyTokenResponse> {
     try {
-      const decoded = this.jwtService.verify(body.access_token, {
-        secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
-      });
+      const secret = this.configService.get<string>('JWT_ACCESS_SECRET');
+      if (!secret) {
+        throw new BadRequestException({
+          status: 'error',
+          message: 'Missing JWT secret',
+          code: AuthErrorCode.AUTH_INVALID_TOKEN,
+        });
+      }
 
-      const nowInSec = Math.floor(Date.now() / 1000);
-      const expiresIn = decoded.exp - nowInSec;
+      const decoded = this.jwtService.verify<{
+        sub: string;
+        exp: number;
+      }>(body.access_token, { secret });
+
+      const now = Math.floor(Date.now() / 1000);
+      const expiresIn = Math.max(decoded.exp - now, 0);
+
+      if (expiresIn <= 0) {
+        throw new UnauthorizedException({
+          status: 'error',
+          message: 'Token has expired',
+          code: AuthErrorCode.AUTH_TOKEN_EXPIRED,
+        });
+      }
 
       return {
         status: 'success',
         data: {
           valid: true,
           user_id: decoded.sub,
-          expires_in: expiresIn > 0 ? expiresIn : 0,
+          expires_in: expiresIn,
         },
       };
-    } catch (err) {
-      return {
-        status: 'success',
-        data: {
-          valid: false,
-          user_id: null,
-          expires_in: 0,
-        },
-      };
+    } catch (err: any) {
+      // Token malformed / invalid
+      if (err?.name === 'JsonWebTokenError') {
+        throw new UnauthorizedException({
+          status: 'error',
+          message: 'Invalid token',
+          code: AuthErrorCode.AUTH_INVALID_TOKEN,
+        });
+      }
+
+      // Token expired
+      if (err?.name === 'TokenExpiredError') {
+        throw new UnauthorizedException({
+          status: 'error',
+          message: 'Token has expired',
+          code: AuthErrorCode.AUTH_TOKEN_EXPIRED,
+        });
+      }
+
+      // Default fallback
+      throw new UnauthorizedException({
+        status: 'error',
+        message: 'Authentication failed',
+        code: AuthErrorCode.AUTH_INVALID_TOKEN,
+      });
     }
   }
   
