@@ -1,29 +1,38 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsBoolean, IsUrl } from 'class-validator';
+import { IsString, IsBoolean, IsEnum, IsNotEmpty } from 'class-validator';
+import { contentCategoriesArray, ContentCategory } from 'src/types/enums';
 
 export class CreateContentDto {
   @ApiProperty({ description: 'Content name' })
   @IsString()
+  @IsNotEmpty()
   contentName: string;
 
-  @ApiProperty({ description: 'Content thumbnail (S3 Link)' })
-  @IsUrl()
+  @ApiProperty({ description: 'Content thumbnail (base64)' })
+  @IsString()
+  @IsNotEmpty()
   contentThumbnail: string;
 
-  @ApiProperty({ description: 'Content video link (S3 Link)' })
-  @IsUrl()
-  contentVideoLink: string;
-
-  @ApiProperty({ description: 'Content category' })
+  @ApiProperty({ description: 'Content video link (base64)' })
   @IsString()
-  contentCategory: string;
+  @IsNotEmpty()
+  contentVideo: string;
+
+  @ApiProperty({
+    description: 'Content category',
+    enum: contentCategoriesArray,
+  })
+  @IsEnum(contentCategoriesArray)
+  contentCategory: ContentCategory;
 
   @ApiProperty({ description: 'Content description' })
   @IsString()
+  @IsNotEmpty()
   contentDescription: string;
 
   @ApiProperty({ description: 'Is content public' })
   @IsBoolean()
+  @IsNotEmpty()
   is_public: boolean;
 
   // Optional property to store video duration

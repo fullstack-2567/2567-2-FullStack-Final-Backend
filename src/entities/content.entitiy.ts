@@ -1,5 +1,6 @@
 import { Model, Column, DataType, Table } from 'sequelize-typescript';
 import { ApiProperty } from '@nestjs/swagger';
+import { contentCategoriesArray, ContentCategory } from 'src/types/enums';
 
 /**มี contentId
  * contentName
@@ -56,57 +57,55 @@ export class Content extends Model {
   @ApiProperty({
     description: 'Category of the content',
     example: 'Comedy',
+    enum: contentCategoriesArray,
   })
   @Column({
-    type: DataType.STRING, //enum
+    type: DataType.ENUM(...contentCategoriesArray),
     allowNull: false,
   })
-  contentCategory: string;
+  contentCategory: ContentCategory;
 
   @ApiProperty({
     description: 'Thumbnail image URL (S3 link)',
     example: 'https://s3.amazonaws.com/bucket/thumbnail.jpg',
-    required: false,
   })
-  @Column({ type: DataType.STRING, allowNull: true })
+  @Column({ type: DataType.STRING, allowNull: false })
   contentThumbnail: string;
 
   @ApiProperty({
     description: 'Video file URL (S3 link)',
     example: 'https://s3.amazonaws.com/bucket/video.mp4',
-    required: false,
   })
-  @Column({ type: DataType.STRING, allowNull: true })
+  @Column({ type: DataType.STRING, allowNull: false })
   contentVideoLink: string;
 
   @ApiProperty({ example: '00:45:32', description: 'Video duration' })
   @Column({
     type: DataType.STRING,
+    allowNull: false,
   })
-  video_duration: string;
+  videoDuration: string;
 
   @ApiProperty({
     description: 'Is the content publicly available',
     example: true,
   })
-  @Column({ type: DataType.BOOLEAN, allowNull: true })
-  is_public: boolean;
+  @Column({ type: DataType.BOOLEAN, defaultValue: false })
+  isPublic: boolean;
 
-  //   @ApiProperty({
-  //     description: 'Creation date of the content',
-  //     example: '2024-01-01T10:00:00Z',
-  //     format: 'date-time',
-  //     required: false,
-  //   })
-  //   @Column({ type: DataType.DATE, allowNull: true })
-  //   create_at: Date;
+  @ApiProperty({
+    description: 'Creation date of the content',
+    example: '2024-01-01T10:00:00Z',
+    format: 'date-time',
+  })
+  @Column({ type: DataType.DATE, defaultValue: DataType.NOW })
+  createdDT: Date;
 
-  //   @ApiProperty({
-  //     description: 'Last update date of the content',
-  //     example: '2024-01-15T12:00:00Z',
-  //     format: 'date-time',
-  //     required: false,
-  //   })
-  //   @Column({ type: DataType.DATE, allowNull: true })
-  //   update_at: Date;
+  @ApiProperty({
+    description: 'Last update date of the content',
+    example: '2024-01-15T12:00:00Z',
+    format: 'date-time',
+  })
+  @Column({ type: DataType.DATE, defaultValue: DataType.NOW })
+  updatedDT: Date;
 }

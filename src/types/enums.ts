@@ -59,3 +59,14 @@ export type UserRole = (typeof userRolesArray)[number];
 
 export const userSexesArray = ['male', 'female', 'other'] as const;
 export type UserSex = (typeof userSexesArray)[number];
+
+export const contentCategoriesArray = [
+  'cybersecurity',
+  'frontend_development',
+  'backend_development',
+  'fullstack_development',
+  'food',
+  'fashion',
+  'language',
+] as const;
+export type ContentCategory = (typeof contentCategoriesArray)[number];

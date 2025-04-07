@@ -27,7 +27,7 @@ export class UserContentReport extends Model {
     type: DataType.UUID,
     allowNull: false,
   })
-  user_id: string;
+  userId: string;
 
   @ApiProperty({
     description: 'User who enrolled in the content',
@@ -47,7 +47,7 @@ export class UserContentReport extends Model {
     type: DataType.UUID,
     allowNull: false,
   })
-  content_id: string;
+  contentId: string;
 
   @ApiProperty({
     description: 'Content that the user enrolled in',
@@ -63,9 +63,9 @@ export class UserContentReport extends Model {
   })
   @Column({
     type: DataType.DATE,
-    allowNull: false,
+    defaultValue: DataType.NOW,
   })
-  enroll_at: Date;
+  enrolledDT: Date;
 
   @ApiProperty({
     description: 'Timestamp when the user completed the content',
@@ -74,7 +74,6 @@ export class UserContentReport extends Model {
   })
   @Column({
     type: DataType.DATE,
-    allowNull: true,
   })
-  complete_at: Date;
+  completedDT: Date;
 }
