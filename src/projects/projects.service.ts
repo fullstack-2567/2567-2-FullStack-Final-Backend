@@ -146,7 +146,7 @@ export class ProjectsService {
       // Check if user already exists
       const existingUser = await this.userRepository.findByPk(mockupUserId);
       if (!existingUser) {
-        return 'User not found Please Login first';
+        throw new BadRequestException('User not found');
       } else {
         // Update user informat
         await this.userRepository.update(project.userInfo, {
