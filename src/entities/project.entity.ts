@@ -13,11 +13,8 @@ import {
   projectTypesArray,
   SDGType,
   sdgTypesArray,
-} from 'src/types/enums';
-import { User } from './user.entity';
-
 } from 'src/types/projects.enum';
-
+import { User } from './user.entity';
 
 @Table({
   tableName: 'Project',

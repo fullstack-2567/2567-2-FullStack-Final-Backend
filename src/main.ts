@@ -14,7 +14,9 @@ async function bootstrap() {
   app.enableCors();
   const configService = app.get(ConfigService);
   const jwtAuthGuard = app.get(JwtAuthGuard);
-  app.setGlobalPrefix('api');
+
+  const contextPath = configService.get('CONTEXT_PATH');
+  app.setGlobalPrefix(contextPath ?? '');
   app.useGlobalGuards(jwtAuthGuard);
 
   // request entity
