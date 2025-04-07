@@ -1,8 +1,7 @@
-import { Column, Model, Table, DataType, CreatedAt, UpdatedAt } from 'sequelize-typescript';
+import { Column, Model, Table, DataType } from 'sequelize-typescript';
+import { UserRole } from '../../auth/enums/roles.enum';
 
-@Table({
-  tableName: 'users',
-})
+@Table({ tableName: 'users' })
 export class User extends Model {
   @Column({
     primaryKey: true,
@@ -11,59 +10,36 @@ export class User extends Model {
   })
   id: string;
 
-  @Column({
-    allowNull: false,
-  })
+  @Column({ allowNull: true })
   name: string;
 
-  @Column({
-    allowNull: false,
-    unique: true,
-  })
+  @Column({ unique: true })
   email: string;
 
-  @Column({
-    type: DataType.ENUM('male', 'female', 'other'),
-    allowNull: true,
-  })
-  sex: string;
+  @Column({ allowNull: true })
+  picture: string;
 
-  @Column({
-    type: DataType.DATEONLY,
-    allowNull: true,
-  })
-  birthdate: Date;
-
-  @Column({
-    defaultValue: 'user',
-  })
-  role: string;
-
-  @Column({
-    allowNull: true,
-  })
+  @Column
   googleId: string;
 
   @Column({
-    defaultValue: false,
+    type: DataType.ENUM(...Object.values(UserRole)),
+    defaultValue: UserRole.USER,
   })
-  disabled: boolean;
+  role: UserRole;
+
+  @Column({ defaultValue: true })
+  isActive: boolean;
 
   @Column({
+    type: DataType.STRING,
     allowNull: true,
-    type: DataType.TEXT,
   })
-  refreshToken: string;
+  refreshToken: string | null;
 
-  @Column({
-    allowNull: true,
-    type: DataType.TEXT,
+  @Column({ 
+    type: DataType.DATE, 
+    defaultValue: DataType.NOW 
   })
-  hashedRefreshToken: string;
-
-  @CreatedAt
   createdAt: Date;
-
-  @UpdatedAt
-  updatedAt: Date;
 }

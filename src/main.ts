@@ -11,6 +11,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
   app.enableCors();
   const jwtAuthGuard = app.get(JwtAuthGuard);
+  app.setGlobalPrefix('api');
   app.useGlobalGuards(jwtAuthGuard);
   console.log('App is starting with env:', process.env.FRONTEND_GOOGLE_REDIRECT_URL);
   const config = new DocumentBuilder()
