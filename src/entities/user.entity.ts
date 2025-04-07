@@ -9,11 +9,19 @@ import {
   userRolesArray,
   UserSex,
   userSexesArray,
+<<<<<<< HEAD
 } from 'src/types/enums';
 
 @Table({
   tableName: 'User',
   timestamps: false, 
+=======
+} from 'src/types/user.enum';
+
+@Table({
+  tableName: 'User',
+  timestamps: false,
+>>>>>>> main
 })
 export class User extends Model {
   @ApiProperty({
@@ -127,6 +135,7 @@ export class User extends Model {
     type: DataType.STRING,
   })
   tel: string;
+<<<<<<< HEAD
 
   @ApiProperty({
     description: 'User status',
@@ -137,4 +146,6 @@ export class User extends Model {
     defaultValue: true,
   })
   active: boolean; // using in get user status
+=======
+>>>>>>> main
 }
