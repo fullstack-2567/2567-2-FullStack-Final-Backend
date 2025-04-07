@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { User } from 'src/entities/user.entity';
-import { UserRole } from 'src/types/enums';
+import { UserRole } from 'src/types/user.enum';
 
 @Injectable()
 export class UsersService {
