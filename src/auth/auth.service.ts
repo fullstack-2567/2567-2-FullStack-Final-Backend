@@ -2,8 +2,8 @@ import { Injectable, ForbiddenException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { UsersService } from '../users/users.service';
-import { User } from '../users/models/user.model';
 import { AuthErrorCode } from './constants/auth-error-code.enum';
+import { User } from 'src/entities/user.entity';
 
 export interface TokensDto {
   accessToken: string;

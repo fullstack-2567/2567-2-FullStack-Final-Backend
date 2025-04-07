@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { Project } from 'src/entities/project.entity';
-import { User } from 'src/users/models/user.model';
+import { User } from 'src/entities/user.entity';
 
 @Module({
   imports: [

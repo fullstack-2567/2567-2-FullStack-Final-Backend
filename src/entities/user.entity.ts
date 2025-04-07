@@ -36,6 +36,12 @@ export class User extends Model {
   @Column({ type: DataType.STRING, unique: true, allowNull: false })
   email: string;
 
+  @Column({ allowNull: true })
+  picture: string;
+
+  @Column
+  googleId: string;
+
   @ApiProperty({
     description: 'Date when the user was created',
     example: '2024-01-01T00:00:00Z',
@@ -127,4 +133,11 @@ export class User extends Model {
     type: DataType.STRING,
   })
   tel: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  refreshToken: string | null;
+
 }

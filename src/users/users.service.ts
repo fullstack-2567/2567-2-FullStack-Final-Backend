@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { User } from './models/user.model';
+import { User } from 'src/entities/user.entity';
 import { UserRole } from 'src/types/enums';
 
 @Injectable()
@@ -70,4 +70,5 @@ export class UsersService {
     
     await user.save();
   }
+  
 }
