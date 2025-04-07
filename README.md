@@ -80,7 +80,9 @@ npm run start:dev
 
 The application should now be running and connected to the PostgreSQL database.
 Access the application at `http://localhost:3000/`
-Access the Swagger UI at `http://localhost:3000/api`
+Access Open API json at `http://localhost:3000/openapi.json`
+Access Scalar API Reference at `http://localhost:3000/reference`,
+or the Swagger UI at `http://localhost:3000/api`
 
 ## Compile and run the project
 
