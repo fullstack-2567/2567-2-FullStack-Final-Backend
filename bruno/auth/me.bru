@@ -1,0 +1,19 @@
+meta {
+  name: me
+  type: http
+  seq: 2
+}
+
+get {
+  url: http://localhost:3000/api/auth/me
+  body: none
+  auth: bearer
+}
+
+headers {
+  ~Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxZjEwYTE2Zi0zZjUxLTRiMTItODhlYi0zZGMzMTM5ZjFmMzQiLCJlbWFpbCI6IjY0MDUwMjI5QGttaXRsLmFjLnRoIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDQwNDg1OTMsImV4cCI6MTg0NDA0OTQ5M30.NhjclyPQeyKM3MleuR-pLcRsvhv1gVhclXAwTfhbHo0
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxZjEwYTE2Zi0zZjUxLTRiMTItODhlYi0zZGMzMTM5ZjFmMzQiLCJlbWFpbCI6IjY0MDUwMjI5QGttaXRsLmFjLnRoIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDQwNTc2MzIsImV4cCI6MTc0NDA1ODUzMn0.oeq8RKhN1SJ_CYsSbcMqy19tAVt4Acw3D5PBMruhpDs
+}

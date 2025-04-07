@@ -31,6 +31,26 @@ export class AuthController {
   ) {}
 
 
+  @Get('test')
+  @ApiOperation({ summary: 'Test endpoint' })
+  @ApiResponse({ status: 200, description: 'Test successful' })
+  test() {
+    return { message: 'Test successful' };
+  }
+
+
+  // me endpoint to get user info
+  @ApiOperation({ summary: 'Get current user info' })
+  @ApiBearerAuth()
+  @ApiResponse({ status: 200, description: 'User info returned' })
+  @Get('me')
+  @HttpCode(HttpStatus.OK)
+  async me(@Req() req: Request) {
+    const user = req.user as { userId: string };
+    const userInfo = await this.authService.getUserInfo(user.userId);
+    return { status: 'success', data: userInfo };
+  }
+
 
   @ApiOperation({ summary: 'Logout current user' })
   @ApiBearerAuth()
@@ -38,8 +58,8 @@ export class AuthController {
   @Post('logout')
   @HttpCode(HttpStatus.OK)
   async logout(@Req() req: Request) {
-    const user = req.user as { id: string };
-    await this.authService.logout(user.id);
+    const user = req.user as { userId: string };
+    await this.authService.logout(user.userId);
     return { message: 'Logged out successfully' };
   }
 
@@ -72,14 +92,12 @@ export class AuthController {
     res.cookie('access_token', tokens.accessToken, {
       httpOnly: true,
       secure: false,
-      sameSite: 'strict',
       maxAge: 15 * 60 * 1000, // 15 minutes
     });
 
     res.cookie('refresh_token', tokens.refreshToken, {
       httpOnly: true,
       secure: true,
-      sameSite: 'strict',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
