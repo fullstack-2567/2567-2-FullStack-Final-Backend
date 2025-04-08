@@ -35,7 +35,7 @@ export class ContentService {
 
     // Get presigned URLs for content thumbnails
     for (const content of contents) {
-      content.dataValues.thumbnailUrl = await getPresignedUrl(
+      content.dataValues.contentThumbnail = await getPresignedUrl(
         this.minioClient,
         'pictures',
         content.contentThumbnail,
