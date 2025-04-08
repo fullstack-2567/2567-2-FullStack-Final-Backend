@@ -27,19 +27,21 @@ export class ContentService {
   ) {}
 
   //get all contents
-  async getAllContents() {
+  async getAllContents(thumbnail: boolean = false) {
     const contents = await this.contentRepository.findAll({
       order: [['updatedDT', 'DESC']],
       include: ['createdByUser'],
     });
 
     // Get presigned URLs for content thumbnails
-    for (const content of contents) {
-      content.dataValues.contentThumbnail = await getPresignedUrl(
-        this.minioClient,
-        'pictures',
-        content.contentThumbnail,
-      );
+    if (thumbnail) {
+      for (const content of contents) {
+        content.dataValues.contentThumbnail = await getPresignedUrl(
+          this.minioClient,
+          'pictures',
+          content.contentThumbnail,
+        );
+      }
     }
 
     return contents;

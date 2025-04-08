@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Req,
 } from '@nestjs/common';
 import { ContentService } from './content.service';
@@ -31,8 +32,8 @@ export class ContentController {
     description: 'Successfully get all contents',
     type: [Content],
   })
-  async getAllContents() {
-    return await this.contentService.getAllContents();
+  async getAllContents(@Query('thumbnail') thumbnail: boolean) {
+    return await this.contentService.getAllContents(thumbnail);
   }
 
   //create content
