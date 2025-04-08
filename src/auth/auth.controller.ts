@@ -98,19 +98,19 @@ export class AuthController {
   async googleAuthCallback(@Req() req: Request, @Res() res: Response) {
     const tokens = await this.authService.handleGoogleLogin(req.user as any);
 
+    const isLocalhost = req.get('origin')?.includes('localhost');
+
     res.cookie('access_token', tokens.accessToken, {
       httpOnly: true,
-      secure: true,
-      domain: 'localhost:5173',
-      sameSite: 'none',
+      secure: !isLocalhost,
+      sameSite: isLocalhost ? 'lax' : 'none',
       maxAge: 15 * 60 * 1000, // 15 minutes
     });
 
     res.cookie('refresh_token', tokens.refreshToken, {
       httpOnly: true,
-      secure: true,
-      sameSite: 'none',
-      domain: 'localhost:5173',
+      secure: !isLocalhost,
+      sameSite: isLocalhost ? 'lax' : 'none',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
