@@ -8,6 +8,7 @@ import { User } from '../entities/user.entity';
 import { InjectMinio } from 'nestjs-minio';
 import { Client } from 'minio';
 import { getPresignedUrl, putObjectFromBase64 } from '../utils/minio.utils';
+import { Roles } from 'src/auth/decorators/roles.decorator';
 @Injectable()
 export class ProjectsService {
   constructor(
@@ -58,6 +59,7 @@ export class ProjectsService {
     };
   }
 
+  @Roles('user')
   async getUserProjects(userId: string) {
     const projects = await this.projectRepository.findAll({
       where: { submittedByUserId: userId },
