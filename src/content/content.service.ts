@@ -29,7 +29,7 @@ export class ContentService {
   //get all contents
   async getAllContents() {
     const contents = await this.contentRepository.findAll({
-      order: [['updatedAt', 'DESC']],
+      order: [['updatedDT', 'DESC']],
       include: ['createdByUser'],
     });
     return contents;
