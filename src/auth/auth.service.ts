@@ -22,9 +22,12 @@ export class AuthService {
     return this.usersService.findOrCreateByGoogleId(profile);
   }
 
-  async refreshTokens(userId: string, refreshToken: string): Promise<TokensDto> {
+  async refreshTokens(
+    userId: string,
+    refreshToken: string,
+  ): Promise<TokensDto> {
     const user = await this.usersService.findById(userId);
-  
+
     if (!user || !user.refreshToken) {
       throw new ForbiddenException({
         status: 'error',
@@ -32,7 +35,7 @@ export class AuthService {
         code: AuthErrorCode.AUTH_REFRESH_INVALID,
       });
     }
-  
+
     // ตรวจ refresh token ว่าตรงกับใน DB
     if (user.refreshToken !== refreshToken) {
       throw new ForbiddenException({
@@ -41,12 +44,19 @@ export class AuthService {
         code: AuthErrorCode.AUTH_REFRESH_INVALID,
       });
     }
-  
-    const tokens = await this.generateTokens(user.userId, user.email, user.role);
-  
+
+    const tokens = await this.generateTokens(
+      user.userId,
+      user.email,
+      user.role,
+    );
+
     // เก็บ refresh token ใหม่ (rotation)
-    await this.usersService.updateRefreshToken(user.userId, tokens.refreshToken);
-  
+    await this.usersService.updateRefreshToken(
+      user.userId,
+      tokens.refreshToken,
+    );
+
     return tokens;
   }
 
@@ -54,13 +64,17 @@ export class AuthService {
     await this.usersService.updateRefreshToken(userId, null);
   }
 
-  async generateTokens(userId: string, email: string, role: string): Promise<TokensDto> {
+  async generateTokens(
+    userId: string,
+    email: string,
+    role: string,
+  ): Promise<TokensDto> {
     const payload = { sub: userId, email, role };
 
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload, {
         secret: this.configService.get('JWT_ACCESS_SECRET'),
-        expiresIn: this.configService.get('JWT_ACCESS_EXPIRATION', '15m'),
+        expiresIn: this.configService.get('JWT_ACCESS_EXPIRATION', '1d'),
       }),
       this.jwtService.signAsync(payload, {
         secret: this.configService.get('JWT_REFRESH_SECRET'),
@@ -75,8 +89,15 @@ export class AuthService {
   }
 
   async handleGoogleLogin(user: User): Promise<TokensDto> {
-    const tokens = await this.generateTokens(user.userId, user.email, user.role);
-    await this.usersService.updateRefreshToken(user.userId, tokens.refreshToken);
+    const tokens = await this.generateTokens(
+      user.userId,
+      user.email,
+      user.role,
+    );
+    await this.usersService.updateRefreshToken(
+      user.userId,
+      tokens.refreshToken,
+    );
     return tokens;
   }
 
