@@ -17,10 +17,13 @@ export class JwtRefreshStrategy extends PassportStrategy(
     super(<StrategyOptionsWithRequest>{
       jwtFromRequest: ExtractJwt.fromExtractors([
         (req: Request) => {
-          const authHeader = req.headers['authorization'];
-          if (!authHeader) return null;
-          const [type, token] = authHeader.split(' ');
-          return type === 'Bearer' ? token : null;
+          // const authHeader = req.headers['authorization'];
+          // if (!authHeader) return null;
+          // const [type, token] = authHeader.split(' ');
+          // return type === 'Bearer' ? token : null;
+          const refreshToken = req.cookies['refresh_token'];
+          if (!refreshToken) return null;
+          return refreshToken;
         },
       ]),
       secretOrKey: configService.get<string>('JWT_REFRESH_SECRET'),
@@ -28,8 +31,12 @@ export class JwtRefreshStrategy extends PassportStrategy(
     });
   }
 
-  async validate(req: Request, payload: { sub: string; email: string; role: string }) {
-    const refreshToken = req.headers['authorization']?.split(' ')[1];
+  async validate(
+    req: Request,
+    payload: { sub: string; email: string; role: string },
+  ) {
+    // const refreshToken = req.headers['authorization']?.split(' ')[1];
+    const refreshToken = req.cookies['refresh_token'];
     if (!refreshToken) {
       throw new UnauthorizedException('Refresh token missing');
     }
