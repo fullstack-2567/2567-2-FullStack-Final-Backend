@@ -32,6 +32,16 @@ export class ContentService {
       order: [['updatedDT', 'DESC']],
       include: ['createdByUser'],
     });
+
+    // Get presigned URLs for content thumbnails
+    for (const content of contents) {
+      content.dataValues.thumbnailUrl = await getPresignedUrl(
+        this.minioClient,
+        'pictures',
+        content.contentThumbnail,
+      );
+    }
+
     return contents;
   }
 
