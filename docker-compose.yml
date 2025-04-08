@@ -10,7 +10,7 @@ services:
     depends_on:
       - db
     volumes:
-      - ./backend:/app
+      - backend:/app
 
   db:
     image: postgres
@@ -22,7 +22,7 @@ services:
     ports:
       - '4527:5432'
     volumes:
-      - . db-data:/var/lib/postgresql/data
+      - db-data:/var/lib/postgresql/data
 
   minio:
     image: minio/minio
@@ -35,8 +35,10 @@ services:
       MINIO_ROOT_USER: fullstack-pj
       MINIO_ROOT_PASSWORD: 95teIksIm9gP
     volumes:
-      - ./minio:/data
+      - minio:/data
 
 
 volumes:
   db-data:
+  minio:
+  backend:
