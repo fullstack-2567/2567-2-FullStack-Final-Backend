@@ -36,7 +36,7 @@ export class CreateContentDto {
   @ApiProperty({ description: 'Is content public' })
   @IsBoolean()
   @IsNotEmpty()
-  is_public: boolean;
+  isPublic: boolean;
 
   // Optional property to store video duration
   @ApiProperty({ description: 'Video duration (in seconds)', required: false })

@@ -56,7 +56,7 @@ export class User extends Model {
     format: 'date-time',
   })
   @Column({ type: DataType.DATE, defaultValue: DataType.NOW })
-  updatedAT: Date;
+  updatedDT: Date;
 
   @ApiProperty({
     description: 'Role of the user',
@@ -139,5 +139,4 @@ export class User extends Model {
     allowNull: true,
   })
   refreshToken: string | null;
-
 }

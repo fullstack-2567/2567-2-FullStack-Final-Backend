@@ -58,7 +58,7 @@ export class ProjectsService {
     };
   }
 
-  async getProjectsByUserId(userId: string) {
+  async getUserProjects(userId: string) {
     const projects = await this.projectRepository.findAll({
       where: { submittedByUserId: userId },
       include: [
@@ -79,10 +79,9 @@ export class ProjectsService {
   async updateProjectStatus(
     projectId: string,
     updateProjectStatusDto: UpdateProjectStatusDto,
+    adminUserId: string,
   ) {
     const { action } = updateProjectStatusDto;
-
-    const mockupAdminId = '123e4567-e89b-12d3-a456-426614174000';
 
     const project = await this.projectRepository.findOne({
       where: { projectId: projectId },
@@ -99,17 +98,17 @@ export class ProjectsService {
         // if project.firstApprovedDT is null and project.firstApprovedByUserId is null
         if (!project.firstApprovedDT && !project.firstApprovedByUserId) {
           project.firstApprovedDT = now;
-          project.firstApprovedByUserId = mockupAdminId;
+          project.firstApprovedByUserId = adminUserId;
         }
         // if project.firstApprovedDT is not null and project.firstApprovedByUserId is not null
         else if (!project.secondApprovedDT && !project.secondApprovedByUserId) {
           project.secondApprovedDT = now;
-          project.secondApprovedByUserId = mockupAdminId;
+          project.secondApprovedByUserId = adminUserId;
         }
         //if project secondApprovedDT is not null and project.secondApprovedByUserId is not null
         else if (!project.thirdApprovedDT && !project.thirdApprovedByUserId) {
           project.thirdApprovedDT = now;
-          project.thirdApprovedByUserId = mockupAdminId;
+          project.thirdApprovedByUserId = adminUserId;
           project.endDate = now;
         } else {
           throw new BadRequestException('Project already fully approved');
@@ -117,7 +116,7 @@ export class ProjectsService {
         break;
       case 'reject':
         project.rejectedDT = now;
-        project.rejectedByUserId = mockupAdminId;
+        project.rejectedByUserId = adminUserId;
         break;
     }
 
@@ -138,19 +137,17 @@ export class ProjectsService {
     });
   }
 
-  async submitProject(project: SubmitProjectDto) {
-    const mockupUserId = '123e4567-e89b-12d3-a456-426614174001';
-
+  async submitProject(project: SubmitProjectDto, userId: string) {
     // check userInfo is not null
     if (project.userInfo) {
       // Check if user already exists
-      const existingUser = await this.userRepository.findByPk(mockupUserId);
+      const existingUser = await this.userRepository.findByPk(userId);
       if (!existingUser) {
         throw new BadRequestException('User not found');
       } else {
         // Update user informat
         await this.userRepository.update(project.userInfo, {
-          where: { userId: mockupUserId },
+          where: { userId: userId },
         });
       }
     }
@@ -170,7 +167,7 @@ export class ProjectsService {
     const newProject = await this.projectRepository.create(
       {
         ...project,
-        submittedByUserId: mockupUserId,
+        submittedByUserId: userId,
         projectDescriptionFile: fileName,
       },
       {

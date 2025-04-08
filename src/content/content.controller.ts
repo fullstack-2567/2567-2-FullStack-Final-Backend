@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Req,
 } from '@nestjs/common';
 import { ContentService } from './content.service';
 import { ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
@@ -16,6 +17,7 @@ import {
   contentCategoriesArray,
   ContentCategory,
 } from 'src/types/content.enum';
+import { Roles } from 'src/auth/decorators/roles.decorator';
 
 @Controller('content')
 export class ContentController {
@@ -34,6 +36,7 @@ export class ContentController {
   }
 
   //create content
+  @Roles('admin')
   @Post('create')
   @ApiOperation({ description: 'Create content' })
   @ApiResponse({
@@ -41,8 +44,10 @@ export class ContentController {
     description: 'Successfully create content',
     type: Content,
   })
-  async createContent(@Body() createContentDto: CreateContentDto) {
-    return await this.contentService.createContent(createContentDto);
+  async createContent(@Req() req, @Body() createContentDto: CreateContentDto) {
+    const user = req.user as { userId: string };
+    const userId = user.userId;
+    return await this.contentService.createContent(createContentDto, userId);
   }
 
   //update content
@@ -96,5 +101,21 @@ export class ContentController {
   })
   async getContentById(@Param('contentId') contentId: string) {
     return await this.contentService.getContentById(contentId);
+  }
+
+  @Roles('user')
+  @Post('enroll/:contentId')
+  async enrollContent(@Req() req, @Param('contentId') contentId: string) {
+    const user = req.user as { userId: string };
+    const userId = user.userId;
+    return await this.contentService.enrollContent(contentId, userId);
+  }
+
+  @Roles('user')
+  @Patch('complete/:contentId')
+  async completeContent(@Req() req, @Param('contentId') contentId: string) {
+    const user = req.user as { userId: string };
+    const userId = user.userId;
+    return await this.contentService.completeContent(contentId, userId);
   }
 }

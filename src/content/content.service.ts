@@ -11,6 +11,7 @@ import { Client } from 'minio';
 import * as stream from 'stream';
 import { getPresignedUrl, putObjectFromBase64 } from 'src/utils/minio.utils';
 import { ContentCategory } from 'src/types/content.enum';
+import { UserContentReport } from 'src/entities/user_content_report.entity';
 
 // Set ffmpeg and ffprobe paths correctly
 ffmpeg.setFfmpegPath(ffmpegPath as unknown as string);
@@ -20,6 +21,8 @@ ffmpeg.setFfprobePath(ffprobePath.path);
 export class ContentService {
   constructor(
     @InjectModel(Content) private readonly contentRepository: typeof Content,
+    @InjectModel(UserContentReport)
+    private readonly userContentReportRepository: typeof UserContentReport,
     @InjectMinio() private readonly minioClient: Client,
   ) {}
 
@@ -33,8 +36,7 @@ export class ContentService {
   }
 
   //create content
-  async createContent(createContentDto: CreateContentDto) {
-    const mockupUserId = '123e4567-e89b-12d3-a456-426614174000';
+  async createContent(createContentDto: CreateContentDto, userId: string) {
     const { contentVideo, contentThumbnail } = createContentDto;
 
     const videoObjectName = await putObjectFromBase64(
@@ -58,7 +60,7 @@ export class ContentService {
         contentVideo: videoObjectName,
         contentThumbnail: thumbnailObjectName,
         videoDuration: videoDuration,
-        createdByUserId: mockupUserId,
+        createdByUserId: userId,
       },
       {
         include: ['createdByUser'],
@@ -161,5 +163,43 @@ export class ContentService {
       contentVideo: videoObjectUrl,
       contentThumbnail: thumbnailObjectUrl,
     };
+  }
+
+  async enrollContent(contentId: string, userId: string) {
+    const existingMap = await this.userContentReportRepository.findOne({
+      where: {
+        userId: userId,
+        contentId: contentId,
+      },
+    });
+
+    if (existingMap) {
+      throw new Error('Content already enrolled');
+    }
+
+    const contentMap = await this.userContentReportRepository.create({
+      userId: userId,
+      contentId: contentId,
+    });
+    return contentMap;
+  }
+
+  async completeContent(contentId: string, userId: string) {
+    await this.userContentReportRepository.update(
+      { completedDT: new Date() },
+      {
+        where: {
+          userId: userId,
+          contentId: contentId,
+        },
+      },
+    );
+    const updatedContentMap = await this.userContentReportRepository.findOne({
+      where: {
+        userId: userId,
+        contentId: contentId,
+      },
+    });
+    return updatedContentMap;
   }
 }
