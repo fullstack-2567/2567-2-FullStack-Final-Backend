@@ -1,6 +1,15 @@
 import {
-  Controller, Get, Post, Req, Res, UseGuards,
-  HttpStatus, HttpCode, Body, BadRequestException, UnauthorizedException,
+  Controller,
+  Get,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+  HttpStatus,
+  HttpCode,
+  Body,
+  BadRequestException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { AuthService } from './auth.service';
@@ -27,9 +36,8 @@ export class AuthController {
   constructor(
     private configService: ConfigService,
     private jwtService: JwtService,
-    private authService: AuthService
+    private authService: AuthService,
   ) {}
-
 
   @Get('test')
   @ApiOperation({ summary: 'Test endpoint' })
@@ -37,7 +45,6 @@ export class AuthController {
   test() {
     return { message: 'Test successful' };
   }
-
 
   // me endpoint to get user info
   @ApiOperation({ summary: 'Get current user info' })
@@ -50,7 +57,6 @@ export class AuthController {
     const userInfo = await this.authService.getUserInfo(user.userId);
     return { status: 'success', data: userInfo };
   }
-
 
   @ApiOperation({ summary: 'Logout current user' })
   @ApiBearerAuth()
@@ -83,7 +89,10 @@ export class AuthController {
 
   @Public()
   @ApiOperation({ summary: 'Handle Google OAuth callback' })
-  @ApiResponse({ status: 302, description: 'Redirects back to frontend with cookie' })
+  @ApiResponse({
+    status: 302,
+    description: 'Redirects back to frontend with cookie',
+  })
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
   async googleAuthCallback(@Req() req: Request, @Res() res: Response) {
@@ -91,13 +100,17 @@ export class AuthController {
 
     res.cookie('access_token', tokens.accessToken, {
       httpOnly: true,
-      secure: false,
+      secure: true,
+      domain: 'localhost:5173',
+      sameSite: 'none',
       maxAge: 15 * 60 * 1000, // 15 minutes
     });
 
     res.cookie('refresh_token', tokens.refreshToken, {
       httpOnly: true,
       secure: true,
+      sameSite: 'none',
+      domain: 'localhost:5173',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
@@ -112,7 +125,9 @@ export class AuthController {
     description: 'Returns token validity, user ID, and expiry',
   })
   @Post('verify')
-  async verifyToken(@Body() body: VerifyTokenDto): Promise<VerifyTokenResponse> {
+  async verifyToken(
+    @Body() body: VerifyTokenDto,
+  ): Promise<VerifyTokenResponse> {
     try {
       const secret = this.configService.get<string>('JWT_ACCESS_SECRET');
       if (!secret) {
