@@ -135,7 +135,7 @@ export class User extends Model {
   tel: string;
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   refreshToken: string | null;
