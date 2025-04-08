@@ -27,8 +27,8 @@ async function bootstrap() {
   app.useGlobalGuards(jwtAuthGuard);
 
   // request entity
-  app.use(json({ limit: '50mb' }));
-  app.use(urlencoded({ extended: true, limit: '50mb' }));
+  app.use(json({ limit: '500mb' }));
+  app.use(urlencoded({ extended: true, limit: '500mb' }));
 
   const config = new DocumentBuilder()
     .setTitle('API')
