@@ -60,6 +60,10 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('swagger', app, document, {
     jsonDocumentUrl: '/openapi.json',
+    swaggerOptions: {
+      persistAuthorization: true,
+      withCredentials: true,
+    },
   });
 
   app.use(
