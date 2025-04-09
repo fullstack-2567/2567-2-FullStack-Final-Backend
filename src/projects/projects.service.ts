@@ -140,18 +140,30 @@ export class ProjectsService {
   }
 
   async submitProject(project: SubmitProjectDto, userId: string) {
+    const existingUser = await this.userRepository.findByPk(userId);
+
+    if (!existingUser) {
+      throw new BadRequestException('User not found');
+    }
+
+    if (
+      !existingUser.prefix ||
+      !existingUser.sex ||
+      !existingUser.education ||
+      !existingUser.firstName ||
+      !existingUser.lastName ||
+      !existingUser.birthDate ||
+      !existingUser.tel
+    ) {
+      throw new BadRequestException('User information is not complete');
+    }
+
     // check userInfo is not null
     if (project.userInfo) {
-      // Check if user already exists
-      const existingUser = await this.userRepository.findByPk(userId);
-      if (!existingUser) {
-        throw new BadRequestException('User not found');
-      } else {
-        // Update user informat
-        await this.userRepository.update(project.userInfo, {
-          where: { userId: userId },
-        });
-      }
+      // Update user informat
+      await this.userRepository.update(project.userInfo, {
+        where: { userId: userId },
+      });
     }
 
     const fileName = await putObjectFromBase64(
