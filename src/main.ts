@@ -40,10 +40,8 @@ async function bootstrap() {
       'access_token',
       {
         type: 'http',
-        scheme: 'bearer',
-        in: 'header',
-        bearerFormat: 'JWT',
         name: 'Access Token',
+        in: 'cookie',
         description: 'Enter Access Token',
       },
       'access_token',
@@ -52,11 +50,9 @@ async function bootstrap() {
       'refresh_token',
       {
         type: 'http',
-        scheme: 'bearer',
-        in: 'header',
-        bearerFormat: 'JWT',
         name: 'Refresh Token',
         description: 'Enter Refresh Token',
+        in: 'cookie',
       },
       'refresh_token',
     )
