@@ -81,7 +81,7 @@ export class ProjectsService {
   async updateProjectStatus(
     projectId: string,
     updateProjectStatusDto: UpdateProjectStatusDto,
-    adminUserId: string,
+    approverId: string,
   ) {
     const { action } = updateProjectStatusDto;
 
@@ -100,17 +100,17 @@ export class ProjectsService {
         // if project.firstApprovedDT is null and project.firstApprovedByUserId is null
         if (!project.firstApprovedDT && !project.firstApprovedByUserId) {
           project.firstApprovedDT = now;
-          project.firstApprovedByUserId = adminUserId;
+          project.firstApprovedByUserId = approverId;
         }
         // if project.firstApprovedDT is not null and project.firstApprovedByUserId is not null
         else if (!project.secondApprovedDT && !project.secondApprovedByUserId) {
           project.secondApprovedDT = now;
-          project.secondApprovedByUserId = adminUserId;
+          project.secondApprovedByUserId = approverId;
         }
         //if project secondApprovedDT is not null and project.secondApprovedByUserId is not null
         else if (!project.thirdApprovedDT && !project.thirdApprovedByUserId) {
           project.thirdApprovedDT = now;
-          project.thirdApprovedByUserId = adminUserId;
+          project.thirdApprovedByUserId = approverId;
           project.endDate = now;
         } else {
           throw new BadRequestException('Project already fully approved');
@@ -118,7 +118,7 @@ export class ProjectsService {
         break;
       case 'reject':
         project.rejectedDT = now;
-        project.rejectedByUserId = adminUserId;
+        project.rejectedByUserId = approverId;
         break;
     }
 
