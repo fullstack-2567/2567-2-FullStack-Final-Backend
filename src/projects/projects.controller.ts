@@ -29,7 +29,6 @@ export class ProjectsController {
     return await this.projectsService.getAllProjects();
   }
 
-  @Roles('user', 'project-approver')
   @Get(':projectId')
   @ApiOperation({
     description:
