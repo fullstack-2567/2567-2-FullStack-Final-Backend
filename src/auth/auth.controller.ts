@@ -24,7 +24,7 @@ import { AuthGuard } from '@nestjs/passport';
 
 import {
   ApiTags,
-  ApiBearerAuth,
+  ApiCookieAuth,
   ApiOperation,
   ApiResponse,
   ApiBody,
@@ -48,7 +48,7 @@ export class AuthController {
 
   // me endpoint to get user info
   @ApiOperation({ summary: 'Get current user info' })
-  @ApiBearerAuth()
+  @ApiCookieAuth('access_token')
   @ApiResponse({ status: 200, description: 'User info returned' })
   @Get('me')
   @HttpCode(HttpStatus.OK)
@@ -59,7 +59,7 @@ export class AuthController {
   }
 
   @ApiOperation({ summary: 'Logout current user' })
-  @ApiBearerAuth()
+  @ApiCookieAuth('access_token')
   @ApiResponse({ status: 200, description: 'Logged out successfully' })
   @Post('logout')
   @HttpCode(HttpStatus.OK)
@@ -85,7 +85,7 @@ export class AuthController {
   }
 
   @ApiOperation({ summary: 'Refresh access token using refresh token' })
-  @ApiBearerAuth()
+  @ApiCookieAuth('refresh_token')
   @ApiResponse({ status: 200, description: 'New tokens returned' })
   @UseGuards(JwtRefreshGuard)
   @Post('refresh')

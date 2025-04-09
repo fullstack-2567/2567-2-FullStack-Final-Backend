@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Patch, Post, Req } from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import {
-  ApiBearerAuth,
+  ApiCookieAuth,
   ApiOperation,
   ApiResponse,
   ApiTags,
@@ -11,7 +11,7 @@ import { UpdateProjectStatusDto } from 'src/dto/updateProjectStatus.dto';
 import { SubmitProjectDto } from 'src/dto/submitProject.dto';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 
-@ApiBearerAuth('accessToken')
+@ApiCookieAuth('access_token')
 @ApiTags('projects')
 @Controller('projects')
 export class ProjectsController {
