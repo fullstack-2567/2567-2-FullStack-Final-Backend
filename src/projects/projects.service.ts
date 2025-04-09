@@ -147,13 +147,13 @@ export class ProjectsService {
     }
 
     if (
-      !existingUser.prefix ||
-      !existingUser.sex ||
-      !existingUser.education ||
-      !existingUser.firstName ||
-      !existingUser.lastName ||
-      !existingUser.birthDate ||
-      !existingUser.tel
+      (!existingUser.prefix && project.userInfo?.prefix) ||
+      (!existingUser.sex && project.userInfo?.sex) ||
+      (!existingUser.education && project.userInfo?.education) ||
+      (!existingUser.firstName && project.userInfo?.firstName) ||
+      (!existingUser.lastName && project.userInfo?.lastName) ||
+      (!existingUser.birthDate && project.userInfo?.birthDate) ||
+      (!existingUser.tel && project.userInfo?.tel)
     ) {
       throw new BadRequestException('User information is not complete');
     }

@@ -126,7 +126,7 @@ export class SubmitProjectDto {
         enum: userSexesArray,
         example: 'male',
       },
-      educationLevel: {
+      education: {
         description: 'Education level of the user',
         enum: educationLevelsArray,
         example: 'bachelor',
@@ -158,7 +158,7 @@ export class SubmitProjectDto {
   userInfo?: {
     prefix: UserPrefix;
     sex: UserSex;
-    educationLevel: EducationLevel;
+    education: EducationLevel;
     firstName: string;
     lastName: string;
     birthDate: Date;
