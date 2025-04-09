@@ -63,9 +63,13 @@ export class AuthController {
   @ApiResponse({ status: 200, description: 'Logged out successfully' })
   @Post('logout')
   @HttpCode(HttpStatus.OK)
-  async logout(@Req() req: Request) {
-    const user = req.user as { userId: string };
-    await this.authService.logout(user.userId);
+  async logout(@Res() res: Response) {
+    res.clearCookie('access_token', {
+      httpOnly: true,
+    });
+    res.clearCookie('refresh_token', {
+      httpOnly: true,
+    });
     return { message: 'Logged out successfully' };
   }
 
