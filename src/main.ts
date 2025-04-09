@@ -35,7 +35,7 @@ async function bootstrap() {
     .setDescription('API documentation')
     .setVersion('1.0')
     .addTag('projects', 'Project management endpoints')
-    .addServer(configService.get('API_ENDPOINT') ?? '')
+    .addServer(configService.get('SERVER_URL') ?? '')
     .addBearerAuth(
       {
         type: 'http',
