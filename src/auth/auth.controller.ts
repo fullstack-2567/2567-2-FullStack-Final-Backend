@@ -78,13 +78,10 @@ export class AuthController {
       path: '/',
     });
 
-    // Send success response before redirect
-    res.json({ status: 'success', message: 'Logged out successfully' });
-
-    // Redirect after response is sent
-    setTimeout(() => {
-      res.redirect(`${this.configService.get('FRONTEND_URL')}`);
-    }, 100);
+    return res.json({
+      status: 'success',
+      message: 'Logged out successfully',
+    });
   }
 
   @ApiOperation({ summary: 'Refresh access token using refresh token' })
