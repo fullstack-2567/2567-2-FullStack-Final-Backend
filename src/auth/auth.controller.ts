@@ -64,18 +64,27 @@ export class AuthController {
   @Post('logout')
   @HttpCode(HttpStatus.OK)
   async logout(@Req() req: Request, @Res() res: Response) {
-    const isLocalhost = req.get('origin')?.includes('localhost');
     res.clearCookie('access_token', {
       httpOnly: true,
-      secure: !isLocalhost,
-      sameSite: isLocalhost ? 'lax' : 'none',
+      secure: true,
+      sameSite: 'none',
+      path: '/',
     });
+
     res.clearCookie('refresh_token', {
       httpOnly: true,
-      secure: !isLocalhost,
-      sameSite: isLocalhost ? 'lax' : 'none',
+      secure: true,
+      sameSite: 'none',
+      path: '/',
     });
-    return res.redirect(`${this.configService.get('FRONTEND_URL')}`);
+
+    // Send success response before redirect
+    res.json({ status: 'success', message: 'Logged out successfully' });
+
+    // Redirect after response is sent
+    setTimeout(() => {
+      res.redirect(`${this.configService.get('FRONTEND_URL')}`);
+    }, 100);
   }
 
   @ApiOperation({ summary: 'Refresh access token using refresh token' })
@@ -107,19 +116,17 @@ export class AuthController {
   async googleAuthCallback(@Req() req: Request, @Res() res: Response) {
     const tokens = await this.authService.handleGoogleLogin(req.user as any);
 
-    const isLocalhost = req.get('origin')?.includes('localhost');
-
     res.cookie('access_token', tokens.accessToken, {
       httpOnly: true,
-      secure: !isLocalhost,
-      sameSite: isLocalhost ? 'lax' : 'none',
+      secure: true,
+      sameSite: 'none',
       maxAge: 24 * 60 * 60 * 1000, // 1 day
     });
 
     res.cookie('refresh_token', tokens.refreshToken, {
       httpOnly: true,
-      secure: !isLocalhost,
-      sameSite: isLocalhost ? 'lax' : 'none',
+      secure: true,
+      sameSite: 'none',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
