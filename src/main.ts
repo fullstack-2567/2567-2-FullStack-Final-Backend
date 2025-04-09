@@ -39,7 +39,7 @@ async function bootstrap() {
     .addCookieAuth(
       'access_token',
       {
-        type: 'http',
+        type: 'apiKey',
         name: 'Access Token',
         in: 'cookie',
         description: 'Enter Access Token',
@@ -49,7 +49,7 @@ async function bootstrap() {
     .addCookieAuth(
       'refresh_token',
       {
-        type: 'http',
+        type: 'apiKey',
         name: 'Refresh Token',
         description: 'Enter Refresh Token',
         in: 'cookie',
