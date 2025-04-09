@@ -29,7 +29,7 @@ export class ProjectsController {
     return await this.projectsService.getAllProjects();
   }
 
-  @Roles('user')
+  @Roles('user', 'project-approver')
   @Get(':projectId')
   @ApiOperation({
     description:
@@ -49,7 +49,6 @@ export class ProjectsController {
     return await this.projectsService.getProjectById(projectId);
   }
 
-  @Roles('user')
   @Get('user-projects')
   @ApiOperation({ description: 'Get projects by user ID' })
   @ApiResponse({
@@ -99,7 +98,6 @@ export class ProjectsController {
     );
   }
 
-  @Roles('user')
   @Post('submit')
   @ApiOperation({
     description:
