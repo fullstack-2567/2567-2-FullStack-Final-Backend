@@ -63,12 +63,17 @@ export class AuthController {
   @ApiResponse({ status: 200, description: 'Logged out successfully' })
   @Post('logout')
   @HttpCode(HttpStatus.OK)
-  async logout(@Res() res: Response) {
+  async logout(@Req() req: Request, @Res() res: Response) {
+    const isLocalhost = req.get('origin')?.includes('localhost');
     res.clearCookie('access_token', {
       httpOnly: true,
+      secure: !isLocalhost,
+      sameSite: isLocalhost ? 'lax' : 'none',
     });
     res.clearCookie('refresh_token', {
       httpOnly: true,
+      secure: !isLocalhost,
+      sameSite: isLocalhost ? 'lax' : 'none',
     });
     return res.redirect(`${this.configService.get('FRONTEND_URL')}`);
   }
