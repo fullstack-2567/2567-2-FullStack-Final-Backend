@@ -70,7 +70,7 @@ export class AuthController {
     res.clearCookie('refresh_token', {
       httpOnly: true,
     });
-    return { message: 'Logged out successfully' };
+    return res.redirect(`${this.configService.get('FRONTEND_URL')}`);
   }
 
   @ApiOperation({ summary: 'Refresh access token using refresh token' })
