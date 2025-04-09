@@ -36,20 +36,30 @@ async function bootstrap() {
     .setVersion('1.0')
     .addTag('projects', 'Project management endpoints')
     .addServer(configService.get('SERVER_URL') ?? '')
-    .addCookieAuth('access_token', {
-      type: 'http',
-      scheme: 'bearer',
-      bearerFormat: 'JWT',
-      name: 'JWT',
-      description: 'Enter JWT token',
-    })
-    .addCookieAuth('refresh_token', {
-      type: 'http',
-      scheme: 'bearer',
-      bearerFormat: 'JWT',
-      name: 'JWT',
-      description: 'Enter JWT token',
-    })
+    .addCookieAuth(
+      'access_token',
+      {
+        type: 'http',
+        scheme: 'bearer',
+        in: 'header',
+        bearerFormat: 'JWT',
+        name: 'Access Token',
+        description: 'Enter Access Token',
+      },
+      'access_token',
+    )
+    .addCookieAuth(
+      'refresh_token',
+      {
+        type: 'http',
+        scheme: 'bearer',
+        in: 'header',
+        bearerFormat: 'JWT',
+        name: 'Refresh Token',
+        description: 'Enter Refresh Token',
+      },
+      'refresh_token',
+    )
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('swagger', app, document, {
