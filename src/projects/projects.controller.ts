@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Patch, Post, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Req,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import {
   ApiCookieAuth,
@@ -67,10 +76,11 @@ export class ProjectsController {
     description: 'No projects found for this user',
   })
   async getUserProjects(@Req() req) {
-    console.log(`getUserProjects controller: ${req}}`);
     const user = req.user as { userId: string };
-    const userId = user.userId;
-    return await this.projectsService.getUserProjects(userId);
+    if (!user || !user.userId) {
+      throw new UnauthorizedException('User not authenticated');
+    }
+    return await this.projectsService.getUserProjects(user.userId);
   }
 
   @Roles('project-approver')

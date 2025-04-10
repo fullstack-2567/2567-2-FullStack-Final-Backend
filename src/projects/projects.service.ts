@@ -60,7 +60,6 @@ export class ProjectsService {
   }
 
   async getUserProjects(userId: string) {
-    console.log(`getUserProjects Service: ${userId}}`);
     const projects = await this.projectRepository.findAll({
       where: { submittedByUserId: userId },
       include: [
