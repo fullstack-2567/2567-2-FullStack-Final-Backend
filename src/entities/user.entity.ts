@@ -1,4 +1,4 @@
-import { Model, Column, DataType, Table } from 'sequelize-typescript';
+import { Model, Column, DataType, Table, HasMany } from 'sequelize-typescript';
 import { ApiProperty } from '@nestjs/swagger';
 import {
   EducationLevel,
@@ -10,6 +10,7 @@ import {
   UserSex,
   userSexesArray,
 } from 'src/types/user.enum';
+import { UserContentReport } from './user_content_report.entity';
 
 @Table({
   tableName: 'User',
@@ -139,4 +140,7 @@ export class User extends Model {
     allowNull: true,
   })
   refreshToken: string | null;
+
+  @HasMany(() => UserContentReport)
+  contentReports: UserContentReport[];
 }
