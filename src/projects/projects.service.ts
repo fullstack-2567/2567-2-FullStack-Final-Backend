@@ -59,7 +59,6 @@ export class ProjectsService {
     };
   }
 
-  @Roles('user')
   async getUserProjects(userId: string) {
     const projects = await this.projectRepository.findAll({
       where: { submittedByUserId: userId },
