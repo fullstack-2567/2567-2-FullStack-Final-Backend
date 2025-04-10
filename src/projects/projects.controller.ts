@@ -10,6 +10,7 @@ import { Project } from 'src/entities/project.entity';
 import { UpdateProjectStatusDto } from 'src/dto/updateProjectStatus.dto';
 import { SubmitProjectDto } from 'src/dto/submitProject.dto';
 import { Roles } from 'src/auth/decorators/roles.decorator';
+import { ProjectIdDto } from 'src/dto/param/projectId.dto';
 
 @ApiCookieAuth('access_token')
 @ApiTags('projects')
@@ -68,7 +69,7 @@ export class ProjectsController {
     status: 404,
     description: 'Project not found',
   })
-  async getProjectById(@Req() req, @Param('projectId') projectId: string) {
+  async getProjectById(@Req() req, @Param() { projectId }: ProjectIdDto) {
     const user = req.user as { userId: string };
     const userId = user.userId;
     return await this.projectsService.getProjectById(projectId, userId);
@@ -95,7 +96,7 @@ export class ProjectsController {
   })
   async updateProjectStatus(
     @Req() req,
-    @Param('projectId') projectId: string,
+    @Param() { projectId }: ProjectIdDto,
     @Body() updateProjectStatusDto: UpdateProjectStatusDto,
   ) {
     const user = req.user as { userId: string };
