@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { SubmitProjectDto } from '../dto/submitProject.dto';
 import { UpdateProjectStatusDto } from '../dto/updateProjectStatus.dto';
@@ -31,7 +31,7 @@ export class ProjectsService {
     return projects;
   }
 
-  async getProjectById(projectId: string) {
+  async getProjectById(projectId: string, userId: string) {
     const project = await this.projectRepository.findOne({
       where: { projectId: projectId },
       include: [
@@ -45,6 +45,18 @@ export class ProjectsService {
     });
     if (!project) {
       throw new NotFoundException('Project not found');
+    }
+
+    const user = await this.userRepository.findByPk(userId);
+
+    if (
+      project.submittedByUserId !== userId &&
+      user &&
+      user.role !== 'project-approver'
+    ) {
+      throw new ForbiddenException(
+        'You are not authorized to view this project',
+      );
     }
 
     const objectUrl = await getPresignedUrl(

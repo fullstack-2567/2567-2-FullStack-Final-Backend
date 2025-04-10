@@ -68,8 +68,10 @@ export class ProjectsController {
     status: 404,
     description: 'Project not found',
   })
-  async getProjectById(@Param('projectId') projectId: string) {
-    return await this.projectsService.getProjectById(projectId);
+  async getProjectById(@Req() req, @Param('projectId') projectId: string) {
+    const user = req.user as { userId: string };
+    const userId = user.userId;
+    return await this.projectsService.getProjectById(projectId, userId);
   }
 
   @Roles('project-approver')
