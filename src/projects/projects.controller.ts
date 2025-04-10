@@ -19,7 +19,10 @@ export class ProjectsController {
 
   @Roles('project-approver')
   @Get()
-  @ApiOperation({ description: 'Get all projects' })
+  @ApiOperation({
+    operationId: 'getAllProjects',
+    description: 'Get all projects',
+  })
   @ApiResponse({
     status: 200,
     description: 'Successfully get all projects',
@@ -31,6 +34,7 @@ export class ProjectsController {
 
   @Get(':projectId')
   @ApiOperation({
+    operationId: 'getProjectById',
     description:
       'Get project by ID, returns projectDescriptionFile as accessible url.',
   })
@@ -49,7 +53,10 @@ export class ProjectsController {
   }
 
   @Get('user-projects')
-  @ApiOperation({ description: 'Get projects by user ID' })
+  @ApiOperation({
+    operationId: 'getUserProjects',
+    description: 'Get projects by user ID',
+  })
   @ApiResponse({
     status: 200,
     description: 'Successfully retrieved projects by user ID',
@@ -68,6 +75,7 @@ export class ProjectsController {
   @Roles('project-approver')
   @Patch(':projectId/status')
   @ApiOperation({
+    operationId: 'updateProjectStatus',
     description: 'Update project status',
   })
   @ApiResponse({
@@ -99,6 +107,7 @@ export class ProjectsController {
 
   @Post('submit')
   @ApiOperation({
+    operationId: 'submitProject',
     description:
       'Submit a project, returns projectDescriptionFile as accessible url.',
   })

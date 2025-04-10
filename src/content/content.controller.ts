@@ -53,7 +53,10 @@ export class ContentController {
 
   //update content
   @Patch(':contentId/update')
-  @ApiOperation({ description: 'Update content' })
+  @ApiOperation({
+    operationId: 'updateContent',
+    description: 'Update content',
+  })
   @ApiResponse({
     status: 200,
     description: 'Successfully update content',
@@ -68,7 +71,10 @@ export class ContentController {
 
   //filter content by category
   @Get('filter/:category')
-  @ApiOperation({ description: 'Filter content by category' })
+  @ApiOperation({
+    operationId: 'filterContentByCategory',
+    description: 'Filter content by category',
+  })
   @ApiParam({
     name: 'category',
     enum: contentCategoriesArray,
@@ -83,7 +89,10 @@ export class ContentController {
   }
 
   @Delete(':contentId')
-  @ApiOperation({ description: 'Delete content' })
+  @ApiOperation({
+    operationId: 'deleteContent',
+    description: 'Delete content',
+  })
   @ApiResponse({
     status: 200,
     description: 'Successfully delete content',
@@ -94,7 +103,10 @@ export class ContentController {
   }
 
   @Get(':contentId')
-  @ApiOperation({ description: 'Get content by Id' })
+  @ApiOperation({
+    operationId: 'getContentById',
+    description: 'Get content by Id',
+  })
   @ApiResponse({
     status: 200,
     description: 'Successfully get content',
