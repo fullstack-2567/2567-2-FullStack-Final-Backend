@@ -67,6 +67,7 @@ export class ProjectsController {
     description: 'No projects found for this user',
   })
   async getUserProjects(@Req() req) {
+    console.log(`getUserProjects controller: ${req}}`);
     const user = req.user as { userId: string };
     const userId = user.userId;
     return await this.projectsService.getUserProjects(userId);

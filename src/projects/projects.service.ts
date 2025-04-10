@@ -60,6 +60,7 @@ export class ProjectsService {
   }
 
   async getUserProjects(userId: string) {
+    console.log(`getUserProjects Service: ${userId}}`);
     const projects = await this.projectRepository.findAll({
       where: { submittedByUserId: userId },
       include: [
@@ -71,7 +72,7 @@ export class ProjectsService {
         'rejectedByUser',
       ],
     });
-    if (!projects) {
+    if (!projects || projects.length === 0) {
       throw new NotFoundException('No projects found for this user');
     }
     return projects;
