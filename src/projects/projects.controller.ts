@@ -32,26 +32,6 @@ export class ProjectsController {
     return await this.projectsService.getAllProjects();
   }
 
-  @Get(':projectId')
-  @ApiOperation({
-    operationId: 'getProjectById',
-    description:
-      'Get project by ID, returns projectDescriptionFile as accessible url.',
-  })
-  @ApiResponse({
-    status: 200,
-    description:
-      'Successfully retrieved project with presigned URL for project description file',
-    type: Project,
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Project not found',
-  })
-  async getProjectById(@Param('projectId') projectId: string) {
-    return await this.projectsService.getProjectById(projectId);
-  }
-
   @Get('me')
   @ApiOperation({
     operationId: 'getUserProjects',
@@ -70,6 +50,26 @@ export class ProjectsController {
     const user = req.user as { userId: string };
     const userId = user.userId;
     return await this.projectsService.getUserProjects(userId);
+  }
+
+  @Get(':projectId')
+  @ApiOperation({
+    operationId: 'getProjectById',
+    description:
+      'Get project by ID, returns projectDescriptionFile as accessible url.',
+  })
+  @ApiResponse({
+    status: 200,
+    description:
+      'Successfully retrieved project with presigned URL for project description file',
+    type: Project,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Project not found',
+  })
+  async getProjectById(@Param('projectId') projectId: string) {
+    return await this.projectsService.getProjectById(projectId);
   }
 
   @Roles('project-approver')
