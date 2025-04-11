@@ -43,6 +43,37 @@ jobs:
         uses: webfactory/ssh-agent@v0.7.0
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          
+      - name: Create docker-compose.yml
+        run: |
+          cat > docker-compose.yml << EOF
+          version: "3"
+          services:
+            app:
+              image: ${{ secrets.DOCKER_REGISTRY }}/kmitl-fullstack-b/fullstack-b-2567-backend:${{ github.sha }}
+              restart: always
+              ports:
+                - "3000:3000"
+              environment:
+                - NODE_ENV=production
+          EOF
+        
+      - name: Copy docker-compose.yml to server
+        run: |
+          scp -o StrictHostKeyChecking=no docker-compose.yml ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/app/
+      
+      - name: Deploy on VPS
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '
+            cd ~/app && \
+            echo "Pulling latest image..." && \
+            docker login ${{ secrets.DOCKER_REGISTRY }} -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }} && \
+            docker pull ${{ secrets.DOCKER_REGISTRY }}/kmitl-fullstack-b/fullstack-b-2567-backend:${{ github.sha }} && \
+            echo "Deploying..." && \
+            docker-compose down && \
+            docker-compose up -d && \
+            echo "Deployment complete!"
+          '
       - name: Deploy to VPS
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '
