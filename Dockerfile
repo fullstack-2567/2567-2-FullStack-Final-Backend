@@ -3,14 +3,18 @@
 
     WORKDIR /app
     
-    # Copy dependencies and install (including dev)
+    # Copy package files first for better caching
     COPY package*.json ./
     
-    # Copy source
+    # Install dependencies
+    RUN npm install
+    
+    # Copy source code
     COPY . .
     
-    # Build app using local Nest CLI
-    RUN npm install
+    # Build app
+    RUN npm run build
+    # หรือใช้ npx nest build ถ้า package.json ไม่มี build script
     
     # ---------- Production stage ----------
     FROM node:22-alpine
@@ -29,4 +33,3 @@
     EXPOSE 3000
     
     CMD ["node", "dist/main"]
-    
