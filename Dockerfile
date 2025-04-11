@@ -4,32 +4,34 @@
     WORKDIR /app
     
     # Copy package files first for better caching
-    COPY package*.json ./
+    COPY package.json package-lock.json ./
     
-    # Install dependencies
-    RUN npm install
+    # Install dependencies (no optional deps, faster)
+    RUN npm ci --omit=optional
     
-    # Copy source code
+    # Copy only source code
     COPY . .
     
-    # Build app
+    # Build NestJS app
     RUN npm run build
-    # หรือใช้ npx nest build ถ้า package.json ไม่มี build script
     
     # ---------- Production stage ----------
-    FROM node:22-alpine
+    FROM node:22-alpine AS production
     
     WORKDIR /app
     
-    # Copy only what's needed
-    COPY --from=builder /app/package*.json ./
-    COPY --from=builder /app/node_modules ./node_modules
-    COPY --from=builder /app/dist ./dist
-    
-    # Use non-root user
+    # Create non-root user
     RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+    
+    # Copy necessary files only
+    COPY --chown=appuser:appgroup --from=builder /app/package*.json ./
+    COPY --chown=appuser:appgroup --from=builder /app/node_modules ./node_modules
+    COPY --chown=appuser:appgroup --from=builder /app/dist ./dist
+    
+    # Switch to non-root
     USER appuser
     
     EXPOSE 3000
     
     CMD ["node", "dist/main"]
+    
