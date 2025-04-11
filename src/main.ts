@@ -63,7 +63,7 @@ async function bootstrap() {
   });
 
   app.use(
-    '/reference',
+    `${contextPath}/reference`,
     apiReference({
       content: () => document,
     }),
