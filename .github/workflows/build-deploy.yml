@@ -43,7 +43,6 @@ jobs:
         uses: webfactory/ssh-agent@v0.7.0
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
       - name: Deploy to VPS
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '
@@ -59,8 +58,8 @@ jobs:
                 restart: always
                 ports:
                   - "3000:3000"
-                environment:
-                  - NODE_ENV=production
+                env_file:
+                  - .env-backend
                 healthcheck:
                   test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/health"]
                   interval: 30s
