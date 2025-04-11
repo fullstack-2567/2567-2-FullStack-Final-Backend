@@ -40,7 +40,7 @@ export class ReportsController {
     return await this.reportsService.getContentsReport();
   }
 
-  @Roles('admin')
+  @Roles('admin', 'project-approver')
   @Get('projects')
   @ApiOperation({
     operationId: 'getProjectsReport',
