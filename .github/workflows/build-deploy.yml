@@ -43,10 +43,23 @@ jobs:
         uses: webfactory/ssh-agent@v0.7.0
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-          
-      - name: Create docker-compose.yml
+
+      - name: Deploy to VPS
         run: |
-          cat > docker-compose.yml << EOF
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+            set -e
+
+            echo "=== Deployment Started ==="
+            cd ~/app
+
+            echo "Docker login..."
+            docker login ${{ secrets.DOCKER_REGISTRY }} -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+
+            echo "Pulling latest image..."
+            docker pull ${{ secrets.DOCKER_REGISTRY }}/kmitl-fullstack-b/fullstack-b-2567-backend:${{ github.sha }}
+
+            echo "Generating docker-compose.yml..."
+            cat > docker-compose.yml << COMPOSE
           version: "3"
           services:
             app:
@@ -54,56 +67,23 @@ jobs:
               restart: always
               ports:
                 - "3000:3000"
-              environment:
-                - NODE_ENV=production
+              env_file:
+                - .env-backend
+              healthcheck:
+                test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/health"]
+                interval: 30s
+                timeout: 10s
+                retries: 3
+                start_period: 10s
+          COMPOSE
+
+                      echo "Deploying app..."
+                      docker-compose down
+                      docker-compose up -d
+
+                      echo "Cleaning up old Docker images..."
+                      docker image prune -af --filter "until=24h"
+                      docker images "${{ secrets.DOCKER_REGISTRY }}/kmitl-fullstack-b/fullstack-b-2567-backend" --format "{{.ID}}" | tail -n +4 | xargs -r docker rmi
+
+                      echo "✅ Deployment complete!"
           EOF
-        
-      - name: Copy docker-compose.yml to server
-        run: |
-          scp -o StrictHostKeyChecking=no docker-compose.yml ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/app/
-      
-      - name: Deploy on VPS
-        run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '
-            cd ~/app && \
-            echo "Pulling latest image..." && \
-            docker login ${{ secrets.DOCKER_REGISTRY }} -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }} && \
-            docker pull ${{ secrets.DOCKER_REGISTRY }}/kmitl-fullstack-b/fullstack-b-2567-backend:${{ github.sha }} && \
-            echo "Deploying..." && \
-            docker-compose down && \
-            docker-compose up -d && \
-            echo "Deployment complete!"
-          '
-      - name: Deploy to VPS
-        run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '
-            cd ~/app && \
-            echo "Pulling latest image..." && \
-            docker pull ${{ secrets.DOCKER_REGISTRY }}/kmitl-fullstack-b/fullstack-b-2567-backend:${{ github.sha }} && \
-            echo "Updating deployment..." && \
-            cat > docker-compose.yml << EOF
-            version: "3"
-            services:
-              app:
-                image: ${{ secrets.DOCKER_REGISTRY }}/kmitl-fullstack-b/fullstack-b-2567-backend:${{ github.sha }}
-                restart: always
-                ports:
-                  - "3000:3000"
-                env_file:
-                  - .env-backend
-                healthcheck:
-                  test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/health"]
-                  interval: 30s
-                  timeout: 10s
-                  retries: 3
-                  start_period: 10s
-            EOF
-            && \
-            docker-compose down && \
-            docker-compose up -d && \
-            echo "Cleaning up old images..." && \
-            docker image prune -af --filter "until=24h" && \
-            docker image prune -f && \
-            docker images "${{ secrets.DOCKER_REGISTRY }}/kmitl-fullstack-b/fullstack-b-2567-backend" --format "{{.ID}}" | tail -n +4 | xargs -r docker rmi && \
-            echo "Deployment and cleanup complete!"
-          '
