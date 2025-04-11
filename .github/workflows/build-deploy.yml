@@ -44,22 +44,10 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Deploy to VPS
+      - name: Create docker-compose.yml
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-            set -e
-
-            echo "=== Deployment Started ==="
-            cd ~/app
-
-            echo "Docker login..."
-            docker login ${{ secrets.DOCKER_REGISTRY }} -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-
-            echo "Pulling latest image..."
-            docker pull ${{ secrets.DOCKER_REGISTRY }}/kmitl-fullstack-b/fullstack-b-2567-backend:${{ github.sha }}
-
-            echo "Generating docker-compose.yml..."
-            cat > docker-compose.yml << COMPOSE
+          cat > docker-compose.yml << EOF
+          version: "3"
           services:
             backend:
               image: ${{ secrets.DOCKER_REGISTRY }}/kmitl-fullstack-b/fullstack-b-2567-backend:${{ github.sha }}
@@ -74,15 +62,49 @@ jobs:
                 timeout: 10s
                 retries: 3
                 start_period: 10s
-          COMPOSE
-
-                      echo "Deploying app..."
-                      docker-compose down
-                      docker-compose up -d
-
-                      echo "Cleaning up old Docker images..."
-                      docker image prune -af --filter "until=24h"
-                      docker images "${{ secrets.DOCKER_REGISTRY }}/kmitl-fullstack-b/fullstack-b-2567-backend" --format "{{.ID}}" | tail -n +4 | xargs -r docker rmi
-
-                      echo "✅ Deployment complete!"
           EOF
+
+      - name: Copy docker-compose.yml to server
+        run: scp -o StrictHostKeyChecking=no docker-compose.yml ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/app/
+
+      - name: Deploy to VPS
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '
+            set -e
+
+            echo "=== Deployment Started ==="
+            cd ~/app
+
+            echo "Docker login..."
+            docker login ${{ secrets.DOCKER_REGISTRY }} -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+
+            echo "Pulling latest image..."
+            docker pull ${{ secrets.DOCKER_REGISTRY }}/kmitl-fullstack-b/fullstack-b-2567-backend:${{ github.sha }}
+
+            echo "Deploying app..."
+            docker-compose down
+            docker-compose up -d
+
+            echo "Cleaning up old Docker images..."
+            # ล้าง dangling images
+            docker image prune -f
+            
+            # เก็บ ID ของ images ที่กำลังใช้งานอยู่เพื่อไม่ลบ
+            USED_IMAGE=$(docker inspect --format="{{.Image}}" $(docker-compose ps -q))
+            
+            # ลบ images เก่าที่เฉพาะเจาะจงของ repository นี้ และไม่ได้ใช้งานอยู่ (เก็บไว้ 3 เวอร์ชันล่าสุด)
+            docker images "${{ secrets.DOCKER_REGISTRY }}/kmitl-fullstack-b/fullstack-b-2567-backend" --format "{{.ID}} {{.Repository}}:{{.Tag}}" | 
+            grep -v "latest" | 
+            sort -r | 
+            tail -n +4 | 
+            while read IMAGE_ID IMAGE_NAME; do
+              if [ "$IMAGE_ID" != "$USED_IMAGE" ]; then
+                echo "Removing old image: $IMAGE_NAME"
+                docker rmi $IMAGE_ID || true
+              else
+                echo "Skipping image in use: $IMAGE_NAME"
+              fi
+            done
+
+            echo "✅ Deployment complete!"
+          '
