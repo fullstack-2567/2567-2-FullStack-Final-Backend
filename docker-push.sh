@@ -14,3 +14,4 @@ docker push registry.nipa.cloud/kmitl-registry/2567-2-fullstack-final-backend:$V
 
 # Output the result
 echo "Docker image 'registry.nipa.cloud/kmitl-registry/2567-2-fullstack-final-backend:$VERSION' has been pushed successfully."
+# test
