@@ -60,13 +60,12 @@ jobs:
 
             echo "Generating docker-compose.yml..."
             cat > docker-compose.yml << COMPOSE
-          version: "3"
           services:
-            app:
+            backend:
               image: ${{ secrets.DOCKER_REGISTRY }}/kmitl-fullstack-b/fullstack-b-2567-backend:${{ github.sha }}
               restart: always
               ports:
-                - "3000:3000"
+                - "9001:3000"
               env_file:
                 - .env-backend
               healthcheck:
