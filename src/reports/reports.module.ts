@@ -5,7 +5,7 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { Project } from 'src/entities/project.entity';
 import { User } from 'src/entities/user.entity';
 import { Content } from 'src/entities/content.entitiy';
-import { UserContentReport } from 'src/entities/user_content_report.entity';
+import { UserContentReport } from 'src/entities/userContentMaps';
 
 @Module({
   controllers: [ReportsController],

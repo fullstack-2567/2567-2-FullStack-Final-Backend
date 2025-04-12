@@ -3,7 +3,7 @@ import { ContentService } from './content.service';
 import { ContentController } from './content.controller';
 import { Content } from 'src/entities/content.entitiy';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { UserContentReport } from 'src/entities/user_content_report.entity';
+import { UserContentReport } from 'src/entities/userContentMaps';
 
 @Module({
   controllers: [ContentController],

@@ -11,7 +11,7 @@ import { Client } from 'minio';
 import * as stream from 'stream';
 import { getPresignedUrl, putObjectFromBase64 } from 'src/utils/minio.utils';
 import { ContentCategory } from 'src/types/content.enum';
-import { UserContentReport } from 'src/entities/user_content_report.entity';
+import { UserContentMaps } from 'src/entities/userContentMaps';
 
 // Set ffmpeg and ffprobe paths correctly
 ffmpeg.setFfmpegPath(ffmpegPath as unknown as string);
@@ -21,8 +21,8 @@ ffmpeg.setFfprobePath(ffprobePath.path);
 export class ContentService {
   constructor(
     @InjectModel(Content) private readonly contentRepository: typeof Content,
-    @InjectModel(UserContentReport)
-    private readonly userContentReportRepository: typeof UserContentReport,
+    @InjectModel(UserContentMaps)
+    private readonly userContentMapsRepository: typeof UserContentMaps,
     @InjectMinio() private readonly minioClient: Client,
   ) {}
 
@@ -178,7 +178,7 @@ export class ContentService {
   }
 
   async enrollContent(contentId: string, userId: string) {
-    const existingMap = await this.userContentReportRepository.findOne({
+    const existingMap = await this.userContentMapsRepository.findOne({
       where: {
         userId: userId,
         contentId: contentId,
@@ -189,7 +189,7 @@ export class ContentService {
       throw new Error('Content already enrolled');
     }
 
-    const contentMap = await this.userContentReportRepository.create({
+    const contentMap = await this.userContentMapsRepository.create({
       userId: userId,
       contentId: contentId,
     });
@@ -197,7 +197,7 @@ export class ContentService {
   }
 
   async completeContent(contentId: string, userId: string) {
-    await this.userContentReportRepository.update(
+    await this.userContentMapsRepository.update(
       { completedDT: new Date() },
       {
         where: {
@@ -206,7 +206,7 @@ export class ContentService {
         },
       },
     );
-    const updatedContentMap = await this.userContentReportRepository.findOne({
+    const updatedContentMap = await this.userContentMapsRepository.findOne({
       where: {
         userId: userId,
         contentId: contentId,

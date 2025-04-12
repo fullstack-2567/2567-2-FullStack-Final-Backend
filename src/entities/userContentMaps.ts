@@ -12,10 +12,10 @@ import { Content } from './content.entitiy';
 import { ApiProperty } from '@nestjs/swagger';
 
 @Table({
-  tableName: 'UserContentReport',
+  tableName: 'UserContentMaps',
   timestamps: false,
 })
-export class UserContentReport extends Model {
+export class UserContentMaps extends Model {
   @ApiProperty({
     description: 'ID of the user who enrolled in the content',
     example: '123e4567-e89b-12d3-a456-426614174000',

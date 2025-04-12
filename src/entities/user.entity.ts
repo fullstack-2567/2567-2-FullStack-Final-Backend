@@ -10,7 +10,7 @@ import {
   UserSex,
   userSexesArray,
 } from 'src/types/user.enum';
-import { UserContentReport } from './user_content_report.entity';
+import { UserContentReport } from './userContentMaps';
 
 @Table({
   tableName: 'User',
