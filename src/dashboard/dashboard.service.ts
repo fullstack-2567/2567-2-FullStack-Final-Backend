@@ -5,6 +5,7 @@ import { User } from 'src/entities/user.entity';
 import { Content } from 'src/entities/content.entitiy';
 import { UserContentMaps } from 'src/entities/userContentMaps.entity';
 import { Op } from 'sequelize';
+import { getDateRange } from 'src/utils/dashboard.utils';
 
 @Injectable()
 export class DashboardService {
@@ -26,9 +27,7 @@ export class DashboardService {
     return {};
   }
   async getPopularContentCategories(month: string) {
-    const [year, monthNum] = month.split('-');
-    const startDate = new Date(`${year}-${monthNum}-01`);
-    const endDate = new Date(parseInt(year), parseInt(monthNum), 0); // Last day of the month
+    const { startDate, endDate } = getDateRange(month);
 
     const contentMaps = await this.userContentMapsRepository.findAll({
       where: {
@@ -66,9 +65,56 @@ export class DashboardService {
     };
   }
 
-  async getPopularContents(month: string) {
-    // Implement popular contents logic
-    return {};
+  async getPopularContents(limit: number, month: string) {
+    const { startDate, endDate } = getDateRange(month);
+
+    // Find all enrollments in the specified month
+    const contentEnrollments = await this.userContentMapsRepository.findAll({
+      where: {
+        enrolledDT: {
+          [Op.between]: [startDate, endDate],
+        },
+      },
+      include: [
+        {
+          model: Content,
+          attributes: ['contentId', 'contentName'],
+        },
+      ],
+    });
+
+    // Count enrollments for each content
+    const contentCounts: Record<
+      string,
+      { contentId: string; contentName: string; enrollmentCount: number }
+    > = {};
+
+    contentEnrollments.forEach((enrollment) => {
+      const contentId = enrollment.contentId;
+      const contentName = enrollment.content.contentName;
+
+      if (!contentCounts[contentId]) {
+        contentCounts[contentId] = {
+          contentId,
+          contentName,
+          enrollmentCount: 0,
+        };
+      }
+
+      contentCounts[contentId].enrollmentCount += 1;
+    });
+
+    // Convert to array, sort by enrollment count, and limit results
+    const popularContents = Object.values(contentCounts)
+      .sort((a, b) => b.enrollmentCount - a.enrollmentCount)
+      .slice(0, limit);
+
+    return {
+      status: 'success',
+      data: {
+        courses: popularContents,
+      },
+    };
   }
 
   async getProjectDashboard(month: string) {

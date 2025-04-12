@@ -5,3 +5,10 @@ export const getMonthIfNotSpecified = (month?: string) => {
   }
   return month;
 };
+
+export const getDateRange = (month: string) => {
+  const [year, monthNum] = month.split('-');
+  const startDate = new Date(`${year}-${monthNum}-01`);
+  const endDate = new Date(parseInt(year), parseInt(monthNum), 0); // Last day of the month
+  return { startDate, endDate };
+};

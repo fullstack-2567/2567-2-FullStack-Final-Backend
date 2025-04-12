@@ -33,8 +33,12 @@ export class DashboardController {
 
   @Roles('admin')
   @Get('popular-contents')
-  async getPopularContents(@Query('month') month?: string) {
+  async getPopularContents(
+    @Query('limit') limit: number = 5,
+    @Query('month') month?: string,
+  ) {
     return await this.dashboardService.getPopularContents(
+      limit,
       getMonthIfNotSpecified(month),
     );
   }
