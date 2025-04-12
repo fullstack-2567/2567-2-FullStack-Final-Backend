@@ -6,6 +6,7 @@ import { Content } from 'src/entities/content.entitiy';
 import { UserContentMaps } from 'src/entities/userContentMaps.entity';
 import { Op } from 'sequelize';
 import { getDateRange } from 'src/utils/dashboard.utils';
+import { SDGType } from 'src/types/projects.enum';
 
 @Injectable()
 export class DashboardService {
@@ -185,14 +186,14 @@ export class DashboardService {
     };
 
     // Count SDG types
-    const sdgCounts: Record<string, number> = {};
+    const sdgCounts = {} as Record<SDGType, number>;
     currentMonthProjects.forEach((project) => {
       const sdg = project.sdgType;
       sdgCounts[sdg] = (sdgCounts[sdg] || 0) + 1;
     });
 
     const popularSdgTypes = Object.entries(sdgCounts)
-      .map(([sdg, count]) => ({ sdg, count }))
+      .map(([sdg, count]) => ({ sdg: sdg as SDGType, count }))
       .sort((a, b) => b.count - a.count)
       .slice(0, 4);
 

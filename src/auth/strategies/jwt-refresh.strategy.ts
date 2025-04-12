@@ -17,11 +17,15 @@ export class JwtRefreshStrategy extends PassportStrategy(
     super(<StrategyOptionsWithRequest>{
       jwtFromRequest: ExtractJwt.fromExtractors([
         (req: Request) => {
-          // const authHeader = req.headers['authorization'];
-          // if (!authHeader) return null;
-          // const [type, token] = authHeader.split(' ');
-          // return type === 'Bearer' ? token : null;
           const refreshToken = req.cookies['refresh_token'];
+
+          if (!refreshToken && process.env.NODE_ENV === 'development') {
+            const authHeader = req.headers['authorization'];
+            if (!authHeader) return null;
+            const [type, token] = authHeader.split(' ');
+            return type === 'Bearer' ? token : null;
+          }
+
           if (!refreshToken) return null;
           return refreshToken;
         },
