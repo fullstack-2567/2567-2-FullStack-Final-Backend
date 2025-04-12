@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Project } from 'src/entities/project.entity';
-import { UserContentMaps } from 'src/entities/userContentMaps';
+import { UserContentMaps } from 'src/entities/userContentMaps.entity';
 import { User } from 'src/entities/user.entity';
 import { Op } from 'sequelize';
 import { Content } from 'src/entities/content.entitiy';
