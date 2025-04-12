@@ -7,6 +7,7 @@ import { UserContentMaps } from 'src/entities/userContentMaps.entity';
 import { Op } from 'sequelize';
 import { getDateRange } from 'src/utils/dashboard.utils';
 import { SDGType } from 'src/types/projects.enum';
+import { SystemLog } from 'src/entities/systemLog.entity';
 
 @Injectable()
 export class DashboardService {
@@ -16,17 +17,105 @@ export class DashboardService {
     @InjectModel(Content) private readonly contentRepository: typeof Content,
     @InjectModel(UserContentMaps)
     private readonly userContentMapsRepository: typeof UserContentMaps,
+    @InjectModel(SystemLog)
+    private readonly systemLogRepository: typeof SystemLog,
   ) {}
 
   async getSummary(month: string) {
-    // Implement summary logic
-    return {};
+    const { startDate, endDate, lastMonthStartDate, lastMonthEndDate } =
+      getDateRange(month);
+
+    const allLogins = await this.systemLogRepository.findAll();
+    const allEnrollments = await this.userContentMapsRepository.findAll();
+
+    const currentMonthLogins = allLogins.filter(
+      (login) => login.loginDT >= startDate && login.loginDT <= endDate,
+    );
+
+    const lastMonthLogins = allLogins.filter(
+      (login) =>
+        login.loginDT >= lastMonthStartDate &&
+        login.loginDT <= lastMonthEndDate,
+    );
+
+    const currentMonthEnrollments = allEnrollments.filter(
+      (enrollment) =>
+        enrollment.enrolledDT >= startDate && enrollment.enrolledDT <= endDate,
+    );
+
+    const lastMonthEnrollments = allEnrollments.filter(
+      (enrollment) =>
+        enrollment.enrolledDT >= lastMonthStartDate &&
+        enrollment.enrolledDT <= lastMonthEndDate,
+    );
+
+    return {
+      status: 'success',
+      data: {
+        loginCount: {
+          lastMonth: lastMonthLogins.length,
+          thisMonth: currentMonthLogins.length,
+        },
+        enrollCount: {
+          lastMonth: lastMonthEnrollments.length,
+          thisMonth: currentMonthEnrollments.length,
+        },
+      },
+    };
   }
 
   async getMonthlyTraffic(month: string) {
-    // Implement monthly traffic logic
-    return {};
+    const { startDate, endDate } = getDateRange(month);
+
+    // Get all logins and enrollments for the month
+    const allLogins = await this.systemLogRepository.findAll({
+      where: {
+        loginDT: {
+          [Op.between]: [startDate, endDate],
+        },
+      },
+    });
+
+    const allEnrollments = await this.userContentMapsRepository.findAll({
+      where: {
+        enrolledDT: {
+          [Op.between]: [startDate, endDate],
+        },
+      },
+    });
+
+    // Get the number of days in the month
+    const year = new Date(startDate).getFullYear();
+    const monthIndex = new Date(startDate).getMonth();
+    const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
+
+    // Initialize array for all days in the month
+    const days = Array.from({ length: daysInMonth }, (_, i) => ({
+      day: i + 1,
+      loginCount: 0,
+      enrollmentCount: 0,
+    }));
+
+    // Count logins per day
+    allLogins.forEach((login) => {
+      const day = new Date(login.loginDT).getDate();
+      days[day - 1].loginCount++;
+    });
+
+    // Count enrollments per day
+    allEnrollments.forEach((enrollment) => {
+      const day = new Date(enrollment.enrolledDT).getDate();
+      days[day - 1].enrollmentCount++;
+    });
+
+    return {
+      status: 'success',
+      data: {
+        days,
+      },
+    };
   }
+
   async getPopularContentCategories(month: string) {
     const { startDate, endDate } = getDateRange(month);
 
