@@ -118,7 +118,99 @@ export class DashboardService {
   }
 
   async getProjectDashboard(month: string) {
-    // Implement project dashboard logic
-    return {};
+    const { startDate, endDate, lastMonthStartDate, lastMonthEndDate } =
+      getDateRange(month);
+
+    // Get all projects in a single query
+    const allProjects = await this.projectRepository.findAll();
+
+    // Filter projects for current and last month in memory
+    const currentMonthProjects = allProjects.filter(
+      (project) =>
+        project.submittedDT >= startDate && project.submittedDT <= endDate,
+    );
+
+    const lastMonthProjects = allProjects.filter(
+      (project) =>
+        project.submittedDT >= lastMonthStartDate &&
+        project.submittedDT <= lastMonthEndDate,
+    );
+
+    // Calculate summary statistics
+    const summary = {
+      pending_projects: {
+        lastMonth: lastMonthProjects.filter(
+          (p) => !p.firstApprovedDT && !p.rejectedDT,
+        ).length,
+        thisMonth: currentMonthProjects.filter(
+          (p) => !p.firstApprovedDT && !p.rejectedDT,
+        ).length,
+      },
+      total_projects: {
+        lastMonth: lastMonthProjects.length,
+        thisMonth: currentMonthProjects.length,
+      },
+      rejected_projects: {
+        lastMonth: lastMonthProjects.filter((p) => p.rejectedDT).length,
+        thisMonth: currentMonthProjects.filter((p) => p.rejectedDT).length,
+      },
+    };
+
+    // Count project types
+    const projectTypeCounts: Record<string, number> = {};
+    currentMonthProjects.forEach((project) => {
+      const type = project.projectType;
+      projectTypeCounts[type] = (projectTypeCounts[type] || 0) + 1;
+    });
+
+    const popularProjectTypes = Object.entries(projectTypeCounts)
+      .map(([type, count]) => ({ type, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 4);
+
+    // Count project statuses
+    const projectStatus = {
+      pending_first_approval: currentMonthProjects.filter(
+        (p) => !p.firstApprovedDT && !p.rejectedDT,
+      ).length,
+      first_approved: currentMonthProjects.filter(
+        (p) => p.firstApprovedDT && !p.secondApprovedDT,
+      ).length,
+      second_approved: currentMonthProjects.filter(
+        (p) => p.secondApprovedDT && !p.thirdApprovedDT,
+      ).length,
+      third_approved: currentMonthProjects.filter((p) => p.thirdApprovedDT)
+        .length,
+      rejected: currentMonthProjects.filter((p) => p.rejectedDT).length,
+    };
+
+    // Count SDG types
+    const sdgCounts: Record<string, number> = {};
+    currentMonthProjects.forEach((project) => {
+      const sdg = project.sdgType;
+      sdgCounts[sdg] = (sdgCounts[sdg] || 0) + 1;
+    });
+
+    const popularSdgTypes = Object.entries(sdgCounts)
+      .map(([sdg, count]) => ({ sdg, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 4);
+
+    // Count child projects
+    const childProjects = {
+      normal: currentMonthProjects.filter((p) => !p.parentProjectID).length,
+      child: currentMonthProjects.filter((p) => p.parentProjectID).length,
+    };
+
+    return {
+      status: 'success',
+      data: {
+        summary,
+        popular_project_types: popularProjectTypes,
+        project_status: projectStatus,
+        popular_sdg_types: popularSdgTypes,
+        child_projects: childProjects,
+      },
+    };
   }
 }
