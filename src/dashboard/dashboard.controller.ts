@@ -1,6 +1,7 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { DashboardService } from './dashboard.service';
+import { getMonthIfNotSpecified } from 'src/utils/dashboard.utils';
 
 @Controller('dashboard')
 export class DashboardController {
@@ -8,31 +9,41 @@ export class DashboardController {
 
   @Roles('admin')
   @Get('summary')
-  async getSummary() {
-    return await this.dashboardService.getSummary();
+  async getSummary(@Query('month') month?: string) {
+    return await this.dashboardService.getSummary(
+      getMonthIfNotSpecified(month),
+    );
   }
 
   @Roles('admin')
   @Get('monthly-traffic')
-  async getMonthlyTrafiic() {
-    return await this.dashboardService.getMonthlyTraffic();
+  async getMonthlyTrafiic(@Query('month') month?: string) {
+    return await this.dashboardService.getMonthlyTraffic(
+      getMonthIfNotSpecified(month),
+    );
   }
 
   @Roles('admin')
   @Get('content-categories')
-  async getPopularContentCategories() {
-    return await this.dashboardService.getPopularContentCategories();
+  async getPopularContentCategories(@Query('month') month?: string) {
+    return await this.dashboardService.getPopularContentCategories(
+      getMonthIfNotSpecified(month),
+    );
   }
 
   @Roles('admin')
   @Get('popular-contents')
-  async getPopularContents() {
-    return await this.dashboardService.getPopularContents();
+  async getPopularContents(@Query('month') month?: string) {
+    return await this.dashboardService.getPopularContents(
+      getMonthIfNotSpecified(month),
+    );
   }
 
   @Roles('admin', 'project-approver')
   @Get('projects')
-  async getProjectDashboard() {
-    return await this.dashboardService.getProjectDashboard();
+  async getProjectDashboard(@Query('month') month?: string) {
+    return await this.dashboardService.getProjectDashboard(
+      getMonthIfNotSpecified(month),
+    );
   }
 }
