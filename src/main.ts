@@ -61,7 +61,7 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('swagger', app, document, {
-    jsonDocumentUrl: '/openapi.json',
+    jsonDocumentUrl: `${contextPath}/openapi.json`,
   });
 
   app.use(
