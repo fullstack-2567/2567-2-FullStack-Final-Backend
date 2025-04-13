@@ -6,5 +6,6 @@ import { SystemLog } from 'src/entities/systemLog.entity';
 @Module({
   imports: [SequelizeModule.forFeature([SystemLog])],
   providers: [LogsService],
+  exports: [LogsService],
 })
 export class LogsModule {}
