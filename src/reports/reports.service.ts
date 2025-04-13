@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Project } from 'src/entities/project.entity';
-import { UserContentReport } from 'src/entities/user_content_report.entity';
+import { UserContentMaps } from 'src/entities/userContentMaps.entity';
 import { User } from 'src/entities/user.entity';
 import { Op } from 'sequelize';
 import { Content } from 'src/entities/content.entitiy';
@@ -10,8 +10,8 @@ import { Content } from 'src/entities/content.entitiy';
 export class ReportsService {
   constructor(
     @InjectModel(Project) private readonly projectRepository: typeof Project,
-    @InjectModel(UserContentReport)
-    private readonly userContentReportRepository: typeof UserContentReport,
+    @InjectModel(UserContentMaps)
+    private readonly userContentMapsRepository: typeof UserContentMaps,
     @InjectModel(User) private readonly userRepository: typeof User,
     @InjectModel(Content) private readonly contentRepository: typeof Content,
   ) {}
@@ -21,7 +21,7 @@ export class ReportsService {
     const users = await this.userRepository.findAll({
       include: [
         {
-          model: UserContentReport,
+          model: UserContentMaps,
           attributes: [],
         },
       ],
@@ -30,12 +30,12 @@ export class ReportsService {
     // Process each user to get the required data
     const userDataPromises = users.map(async (user) => {
       // Count total courses taken
-      const coursesTaken = await this.userContentReportRepository.count({
+      const coursesTaken = await this.userContentMapsRepository.count({
         where: { userId: user.userId },
       });
 
       // Count completed courses
-      const coursesCompleted = await this.userContentReportRepository.count({
+      const coursesCompleted = await this.userContentMapsRepository.count({
         where: {
           userId: user.userId,
           completedDT: { [Op.ne]: null },
@@ -60,12 +60,12 @@ export class ReportsService {
     // Process each content to get the required data
     const contentDataPromises = contents.map(async (content) => {
       // Count total students enrolled
-      const studentsEnrolled = await this.userContentReportRepository.count({
+      const studentsEnrolled = await this.userContentMapsRepository.count({
         where: { contentId: content.contentId },
       });
 
       // Count students who completed the course
-      const studentsCompleted = await this.userContentReportRepository.count({
+      const studentsCompleted = await this.userContentMapsRepository.count({
         where: {
           contentId: content.contentId,
           completedDT: { [Op.ne]: null },

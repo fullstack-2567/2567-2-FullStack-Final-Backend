@@ -29,6 +29,8 @@ import {
   ApiResponse,
   ApiBody,
 } from '@nestjs/swagger';
+import { LogsService } from 'src/logs/logs.service';
+import { User } from 'src/entities/user.entity';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -37,6 +39,7 @@ export class AuthController {
     private configService: ConfigService,
     private jwtService: JwtService,
     private authService: AuthService,
+    private logsService: LogsService,
   ) {}
 
   @Get('test')
@@ -111,7 +114,8 @@ export class AuthController {
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
   async googleAuthCallback(@Req() req: Request, @Res() res: Response) {
-    const tokens = await this.authService.handleGoogleLogin(req.user as any);
+    const user = req.user as User;
+    const tokens = await this.authService.handleGoogleLogin(user);
 
     res.cookie('access_token', tokens.accessToken, {
       httpOnly: true,
@@ -126,6 +130,8 @@ export class AuthController {
       sameSite: 'none',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
+
+    await this.logsService.login(user.userId);
 
     return res.redirect(`${this.configService.get('FRONTEND_URL')}`);
   }

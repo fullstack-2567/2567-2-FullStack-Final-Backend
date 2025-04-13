@@ -9,6 +9,8 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { ContentModule } from './content/content.module';
 import { ReportsModule } from './reports/reports.module';
+import { DashboardModule } from './dashboard/dashboard.module';
+import { LogsModule } from './logs/logs.module';
 
 @Module({
   imports: [
@@ -22,6 +24,8 @@ import { ReportsModule } from './reports/reports.module';
     UsersModule,
     ContentModule,
     ReportsModule,
+    DashboardModule,
+    LogsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
