@@ -33,8 +33,8 @@ import { UserRole, userRolesArray } from 'src/types/user.enum';
     @UseGuards(JwtAuthGuard)
     @Get()
     @ApiOperation({ 
-        summary: 'Get all users with pagination',
-        operationId: 'getAllUsers',
+      operationId: 'getAllUsers',
+      description: 'Get all users with pagination',
     })
     @ApiQuery({ name: 'page', required: false, example: 1 })
     @ApiQuery({ name: 'limit', required: false, example: 10 })
@@ -48,8 +48,8 @@ import { UserRole, userRolesArray } from 'src/types/user.enum';
     @UseGuards(JwtAuthGuard)
     @Get(':userId')
     @ApiOperation({ 
-        summary: 'Get user by ID',
-        operationId: 'getUserById',
+      operationId: 'getUserById',
+      description: 'Get user by ID',
     })
     @ApiParam({ name: 'userId', description: 'User ID' })
     @ApiResponse({ status: 200, description: 'User data' })
@@ -61,8 +61,8 @@ import { UserRole, userRolesArray } from 'src/types/user.enum';
     @UseGuards(JwtAuthGuard)
     @Patch(':userId')
     @ApiOperation({ 
-        summary: 'Update your own user info',
-        operationId: 'updateUserById', 
+      operationId: 'updateUserById', 
+      description: 'Update your own user info',
     })
     @ApiParam({ name: 'userId', description: 'User ID' })
     @ApiBody({ type: patchUserByIdDto })
@@ -83,8 +83,8 @@ import { UserRole, userRolesArray } from 'src/types/user.enum';
     @Roles('admin')
     @Patch(':userId/role')
     @ApiOperation({ 
-        summary: 'Update user role (admin only)',
-        operationId: 'updateUserRole', 
+      operationId: 'updateUserRole', 
+      description: 'Update user role (admin only)',
     })
     @ApiParam({ name: 'userId', description: 'User ID' })
     @ApiBody({
