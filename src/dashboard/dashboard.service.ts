@@ -128,7 +128,7 @@ export class DashboardService {
       include: [
         {
           model: Content,
-          attributes: ['category'],
+          attributes: ['contentCategory'],
         },
       ],
     });
