@@ -1,8 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { User } from 'src/entities/user.entity';
-import { UserRole } from 'src/types/user.enum';
+import { UserRole, userRolesArray } from 'src/types/user.enum';
 import { patchUserByIdDto } from './dto/patchUserById.dto';
+import { Op, Sequelize } from 'sequelize';
 
 @Injectable()
 export class UsersService {
@@ -83,18 +84,41 @@ export class UsersService {
     return user;
   }
 
-  async findAllWithPagination(page = 1, limit = 10): Promise<{
+  async findAllWithPagination(
+    page = 1,
+    limit = 10,
+    search?: string,
+    role?: string,
+  ): Promise<{
     users: User[];
     total: number;
     page: number;
     totalPages: number;
   }> {
     const offset = (page - 1) * limit;
+    const where: any = {};
+  
+    if (search) {
+      where[Op.or] = [
+        { email: { [Op.iLike]: `%${search}%` } },
+        { firstName: { [Op.iLike]: `%${search}%` } },
+        { lastName: { [Op.iLike]: `%${search}%` } },
+        Sequelize.where(
+          Sequelize.cast(Sequelize.col('userId'), 'TEXT'),
+          { [Op.iLike]: `%${search}%` }
+        ),
+      ];
+    }
+  
+    if (role) {
+      where.role = role;
+    }
   
     const { rows: users, count: total } = await this.userModel.findAndCountAll({
+      where,
       offset,
       limit,
-      order: [['createdAt', 'DESC']],
+      order: [['createdDT', 'DESC']],
     });
   
     return {
@@ -104,5 +128,9 @@ export class UsersService {
       totalPages: Math.ceil(total / limit),
     };
   }
+  getAvailableRoles(): string[] {
+    return Array.from(userRolesArray);
+  }
+  
   
 }
