@@ -129,4 +129,26 @@ export class ProjectsController {
     const userId = user.userId;
     return await this.projectsService.submitProject(project, userId);
   }
+
+  @Get('me/latest')
+  @ApiOperation({
+    operationId: 'getUserLatestProject',
+    description:
+      'Get the latest project submitted by the user with approval status',
+  })
+  @ApiResponse({
+    status: 200,
+    description:
+      'Successfully retrieved the latest project with approval status',
+    type: Project,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No projects found for this user',
+  })
+  async getUserLatestProject(@Req() req) {
+    const user = req.user as { userId: string };
+    const userId = user.userId;
+    return await this.projectsService.getUserLatestProject(userId);
+  }
 }

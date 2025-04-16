@@ -17,6 +17,60 @@ export class ProjectsService {
     @InjectMinio() private readonly minioClient: Client,
   ) {}
 
+  async getUserLatestProject(userId: string) {
+    const latestProject = await this.projectRepository.findOne({
+      where: { submittedByUserId: userId },
+      include: [
+        'ChildProjects',
+        'submittedByUser',
+        'firstApprovedByUser',
+        'secondApprovedByUser',
+        'thirdApprovedByUser',
+        'rejectedByUser',
+      ],
+      order: [['submittedDT', 'DESC']],
+    });
+  
+    if (!latestProject) {
+      throw new NotFoundException('No projects found for this user');
+    }
+  
+    // ตรวจสอบสถานะการอนุมัติของโครงการล่าสุด
+    const isFullyApproved = latestProject.thirdApprovedDT !== null;
+    const isRejected = latestProject.rejectedDT !== null;
+    const isPending = !isFullyApproved && !isRejected;
+  
+    // สร้าง status string ที่อ่านง่าย
+    let approvalStatus = 'pending';
+    if (isFullyApproved) {
+      approvalStatus = 'approved';
+    } else if (isRejected) {
+      approvalStatus = 'rejected';
+    } else if (latestProject.secondApprovedDT !== null) {
+      approvalStatus = 'pending_third_approval';
+    } else if (latestProject.firstApprovedDT !== null) {
+      approvalStatus = 'pending_second_approval';
+    } else {
+      approvalStatus = 'pending_first_approval';
+    }
+  
+    // สร้าง object URL สำหรับไฟล์รายละเอียดโครงการ
+    const objectUrl = await getPresignedUrl(
+      this.minioClient,
+      'projects',
+      latestProject.projectDescriptionFile,
+    );
+  
+    return {
+      ...latestProject.dataValues,
+      projectDescriptionFile: objectUrl,
+      approvalStatus,
+      isFullyApproved,
+      isRejected,
+      isPending,
+    };
+  }
+
   async getAllProjects() {
     const projects = await this.projectRepository.findAll({
       include: [
