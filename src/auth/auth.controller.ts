@@ -31,6 +31,7 @@ import {
 } from '@nestjs/swagger';
 import { LogsService } from 'src/logs/logs.service';
 import { User } from 'src/entities/user.entity';
+import { MeDto } from 'src/dto/response/auth/me.response.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -52,7 +53,7 @@ export class AuthController {
   // me endpoint to get user info
   @ApiOperation({ operationId: 'getAuthMe', summary: 'Get current user info' })
   @ApiCookieAuth('access_token')
-  @ApiResponse({ status: 200, description: 'User info returned' })
+  @ApiResponse({ status: 200, description: 'User info returned', type: MeDto })
   @Get('me')
   @HttpCode(HttpStatus.OK)
   async me(@Req() req: Request) {
