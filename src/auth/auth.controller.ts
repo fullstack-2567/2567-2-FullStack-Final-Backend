@@ -50,7 +50,7 @@ export class AuthController {
   }
 
   // me endpoint to get user info
-  @ApiOperation({ summary: 'Get current user info' })
+  @ApiOperation({ operationId: 'getAuthMe', summary: 'Get current user info' })
   @ApiCookieAuth('access_token')
   @ApiResponse({ status: 200, description: 'User info returned' })
   @Get('me')
@@ -61,7 +61,7 @@ export class AuthController {
     return { status: 'success', data: userInfo };
   }
 
-  @ApiOperation({ summary: 'Logout current user' })
+  @ApiOperation({ operationId: 'logout', summary: 'Logout current user' })
   @ApiCookieAuth('access_token')
   @ApiResponse({ status: 200, description: 'Logged out successfully' })
   @Post('logout')
@@ -87,7 +87,10 @@ export class AuthController {
     });
   }
 
-  @ApiOperation({ summary: 'Refresh access token using refresh token' })
+  @ApiOperation({
+    operationId: 'refreshToken',
+    summary: 'Refresh access token using refresh token',
+  })
   @ApiCookieAuth('refresh_token')
   @ApiResponse({ status: 200, description: 'New tokens returned' })
   @UseGuards(JwtRefreshGuard)
@@ -99,7 +102,10 @@ export class AuthController {
   }
 
   @Public()
-  @ApiOperation({ summary: 'Initiate Google OAuth login' })
+  @ApiOperation({
+    operationId: 'googleLogin',
+    summary: 'Initiate Google OAuth login',
+  })
   @ApiResponse({ status: 302, description: 'Redirect to Google login page' })
   @Get('google')
   @UseGuards(AuthGuard('google'))

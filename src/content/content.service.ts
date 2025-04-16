@@ -225,6 +225,17 @@ export class ContentService {
   }
 
   async completeContent(contentId: string, userId: string) {
+    const existingEnrollment = await this.enrollmentRepository.findOne({
+      where: {
+        userId: userId,
+        contentId: contentId,
+      },
+    });
+
+    if (!existingEnrollment) {
+      throw new Error('Content not enrolled');
+    }
+
     await this.enrollmentRepository.update(
       { completedDT: new Date() },
       {

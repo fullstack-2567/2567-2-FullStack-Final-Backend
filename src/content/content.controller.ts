@@ -59,7 +59,7 @@ export class ContentController {
   //create content
   @Roles('admin')
   @Post('create')
-  @ApiOperation({ description: 'Create content' })
+  @ApiOperation({ operationId: 'createContent', description: 'Create content' })
   @ApiResponse({
     status: 201,
     description: 'Successfully create content',
