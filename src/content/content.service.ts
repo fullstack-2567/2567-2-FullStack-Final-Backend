@@ -56,16 +56,18 @@ export class ContentService {
       include: ['content'],
     });
 
-    const enrolledContents = enrollments.map(async (enrollment) => {
-      return {
-        ...enrollment.content,
-        contentThumbnail: await getPresignedUrl(
-          this.minioClient,
-          'pictures',
-          enrollment.content.contentThumbnail,
-        ),
-      };
-    });
+    const enrolledContents = await Promise.all(
+      enrollments.map(async (enrollment) => {
+        return {
+          ...enrollment.content,
+          contentThumbnail: await getPresignedUrl(
+            this.minioClient,
+            'pictures',
+            enrollment.content.contentThumbnail,
+          ),
+        };
+      }),
+    );
 
     return enrolledContents;
   }
