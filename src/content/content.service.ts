@@ -173,6 +173,9 @@ export class ContentService {
       throw new Error('Content not found');
     }
 
+    await this.minioClient.removeObject('videos', content.contentVideo);
+    await this.minioClient.removeObject('pictures', content.contentThumbnail);
+
     await content.destroy();
     return { message: 'Content deleted successfully' };
   }
