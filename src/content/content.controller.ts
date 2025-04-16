@@ -39,7 +39,7 @@ export class ContentController {
     return await this.contentService.getAllContents(thumbnail);
   }
 
-  @Get()
+  @Get('me')
   @ApiOperation({
     operationId: 'getUserContents',
     description: 'Get user enrolled contents',
