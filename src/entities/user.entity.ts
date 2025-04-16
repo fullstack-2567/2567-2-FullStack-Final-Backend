@@ -10,7 +10,7 @@ import {
   UserSex,
   userSexesArray,
 } from 'src/types/user.enum';
-import { UserContentMaps } from './userContentMaps.entity';
+import { Enrollment } from './enrollment.entity';
 
 @Table({
   tableName: 'User',
@@ -141,6 +141,6 @@ export class User extends Model {
   })
   refreshToken: string | null;
 
-  @HasMany(() => UserContentMaps)
-  contentReports: UserContentMaps[];
+  @HasMany(() => Enrollment)
+  contentReports: Enrollment[];
 }

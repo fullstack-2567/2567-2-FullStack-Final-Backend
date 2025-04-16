@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Project } from 'src/entities/project.entity';
 import { User } from 'src/entities/user.entity';
 import { Content } from 'src/entities/content.entitiy';
-import { UserContentMaps } from 'src/entities/userContentMaps.entity';
+import { Enrollment } from 'src/entities/enrollment.entity';
 import { Op } from 'sequelize';
 import { getDateRange } from 'src/utils/dashboard.utils';
 import { SDGType } from 'src/types/projects.enum';
@@ -15,8 +15,8 @@ export class DashboardService {
     @InjectModel(Project) private readonly projectRepository: typeof Project,
     @InjectModel(User) private readonly userRepository: typeof User,
     @InjectModel(Content) private readonly contentRepository: typeof Content,
-    @InjectModel(UserContentMaps)
-    private readonly userContentMapsRepository: typeof UserContentMaps,
+    @InjectModel(Enrollment)
+    private readonly enrollmentRepository: typeof Enrollment,
     @InjectModel(SystemLog)
     private readonly systemLogRepository: typeof SystemLog,
   ) {}
@@ -26,7 +26,7 @@ export class DashboardService {
       getDateRange(month);
 
     const allLogins = await this.systemLogRepository.findAll();
-    const allEnrollments = await this.userContentMapsRepository.findAll();
+    const allEnrollments = await this.enrollmentRepository.findAll();
 
     const currentMonthLogins = allLogins.filter(
       (login) => login.loginDT >= startDate && login.loginDT <= endDate,
@@ -76,7 +76,7 @@ export class DashboardService {
       },
     });
 
-    const allEnrollments = await this.userContentMapsRepository.findAll({
+    const allEnrollments = await this.enrollmentRepository.findAll({
       where: {
         enrolledDT: {
           [Op.between]: [startDate, endDate],
@@ -119,7 +119,7 @@ export class DashboardService {
   async getPopularContentCategories(month: string) {
     const { startDate, endDate } = getDateRange(month);
 
-    const contentMaps = await this.userContentMapsRepository.findAll({
+    const contentMaps = await this.enrollmentRepository.findAll({
       where: {
         enrolledDT: {
           [Op.between]: [startDate, endDate],
@@ -159,7 +159,7 @@ export class DashboardService {
     const { startDate, endDate } = getDateRange(month);
 
     // Find all enrollments in the specified month
-    const contentEnrollments = await this.userContentMapsRepository.findAll({
+    const contentEnrollments = await this.enrollmentRepository.findAll({
       where: {
         enrolledDT: {
           [Op.between]: [startDate, endDate],

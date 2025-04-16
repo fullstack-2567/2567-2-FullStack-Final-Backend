@@ -35,9 +35,6 @@ async function bootstrap() {
     .setDescription('API documentation')
     .setVersion('1.0')
     .addTag('projects', 'Project management endpoints')
-    .addServer(
-      configService.get('SERVER_URL') ?? 'https://fullstack-b.vishsiri.dev',
-    )
     .addCookieAuth(
       'access_token',
       {

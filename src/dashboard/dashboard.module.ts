@@ -5,18 +5,12 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { Project } from 'src/entities/project.entity';
 import { User } from 'src/entities/user.entity';
 import { Content } from 'src/entities/content.entitiy';
-import { UserContentMaps } from 'src/entities/userContentMaps.entity';
+import { Enrollment } from 'src/entities/enrollment.entity';
 import { SystemLog } from 'src/entities/systemLog.entity';
 
 @Module({
   imports: [
-    SequelizeModule.forFeature([
-      Project,
-      User,
-      Content,
-      UserContentMaps,
-      SystemLog,
-    ]),
+    SequelizeModule.forFeature([Project, User, Content, Enrollment, SystemLog]),
   ],
   controllers: [DashboardController],
   providers: [DashboardService],

@@ -11,7 +11,7 @@ import { Client } from 'minio';
 import * as stream from 'stream';
 import { getPresignedUrl, putObjectFromBase64 } from 'src/utils/minio.utils';
 import { ContentCategory } from 'src/types/content.enum';
-import { UserContentMaps } from 'src/entities/userContentMaps.entity';
+import { Enrollment } from 'src/entities/enrollment.entity';
 
 // Set ffmpeg and ffprobe paths correctly
 ffmpeg.setFfmpegPath(ffmpegPath as unknown as string);
@@ -21,8 +21,8 @@ ffmpeg.setFfprobePath(ffprobePath.path);
 export class ContentService {
   constructor(
     @InjectModel(Content) private readonly contentRepository: typeof Content,
-    @InjectModel(UserContentMaps)
-    private readonly userContentMapsRepository: typeof UserContentMaps,
+    @InjectModel(Enrollment)
+    private readonly enrollmentRepository: typeof Enrollment,
     @InjectMinio() private readonly minioClient: Client,
   ) {}
 
@@ -48,7 +48,7 @@ export class ContentService {
   }
 
   async getUserContents(userId: string) {
-    const enrollments = await this.userContentMapsRepository.findAll({
+    const enrollments = await this.enrollmentRepository.findAll({
       order: [['enrolledDT', 'DESC']],
       where: {
         userId: userId,
@@ -206,7 +206,7 @@ export class ContentService {
   }
 
   async enrollContent(contentId: string, userId: string) {
-    const existingMap = await this.userContentMapsRepository.findOne({
+    const existingMap = await this.enrollmentRepository.findOne({
       where: {
         userId: userId,
         contentId: contentId,
@@ -217,7 +217,7 @@ export class ContentService {
       throw new Error('Content already enrolled');
     }
 
-    const contentMap = await this.userContentMapsRepository.create({
+    const contentMap = await this.enrollmentRepository.create({
       userId: userId,
       contentId: contentId,
     });
@@ -225,7 +225,7 @@ export class ContentService {
   }
 
   async completeContent(contentId: string, userId: string) {
-    await this.userContentMapsRepository.update(
+    await this.enrollmentRepository.update(
       { completedDT: new Date() },
       {
         where: {
@@ -234,7 +234,7 @@ export class ContentService {
         },
       },
     );
-    const updatedContentMap = await this.userContentMapsRepository.findOne({
+    const updatedContentMap = await this.enrollmentRepository.findOne({
       where: {
         userId: userId,
         contentId: contentId,
