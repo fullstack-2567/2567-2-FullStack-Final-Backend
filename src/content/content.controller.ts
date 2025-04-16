@@ -26,7 +26,10 @@ export class ContentController {
 
   //get all contents
   @Get()
-  @ApiOperation({ description: 'Get all contents' })
+  @ApiOperation({
+    operationId: 'getAllContents',
+    description: 'Get all contents',
+  })
   @ApiResponse({
     status: 200,
     description: 'Successfully get all contents',
@@ -34,6 +37,17 @@ export class ContentController {
   })
   async getAllContents(@Query('thumbnail') thumbnail: boolean) {
     return await this.contentService.getAllContents(thumbnail);
+  }
+
+  @Get()
+  @ApiOperation({
+    operationId: 'getUserContents',
+    description: 'Get user enrolled contents',
+  })
+  async getUserContents(@Req() req) {
+    const user = req.user as { userId: string };
+    const userId = user.userId;
+    return await this.contentService.getUserContents(userId);
   }
 
   //create content
@@ -116,7 +130,6 @@ export class ContentController {
     return await this.contentService.getContentById(contentId);
   }
 
-  @Roles('user')
   @Post('enroll/:contentId')
   async enrollContent(@Req() req, @Param('contentId') contentId: string) {
     const user = req.user as { userId: string };
@@ -124,7 +137,6 @@ export class ContentController {
     return await this.contentService.enrollContent(contentId, userId);
   }
 
-  @Roles('user')
   @Patch('complete/:contentId')
   async completeContent(@Req() req, @Param('contentId') contentId: string) {
     const user = req.user as { userId: string };

@@ -47,6 +47,17 @@ export class ContentService {
     return contents;
   }
 
+  async getUserContents(userId: string) {
+    const enrollments = await this.userContentMapsRepository.findAll({
+      order: [['enrolledDT', 'DESC']],
+      where: {
+        userId: userId,
+      },
+      include: ['content'],
+    });
+    return enrollments;
+  }
+
   //create content
   async createContent(createContentDto: CreateContentDto, userId: string) {
     const { contentVideo, contentThumbnail } = createContentDto;
