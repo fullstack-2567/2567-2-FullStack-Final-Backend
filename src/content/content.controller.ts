@@ -130,6 +130,10 @@ export class ContentController {
     return await this.contentService.getContentById(contentId);
   }
 
+  @ApiOperation({
+    operationId: 'enroll',
+    description: 'Enroll to a content',
+  })
   @Post('enroll/:contentId')
   async enrollContent(@Req() req, @Param('contentId') contentId: string) {
     const user = req.user as { userId: string };
@@ -137,6 +141,10 @@ export class ContentController {
     return await this.contentService.enrollContent(contentId, userId);
   }
 
+  @ApiOperation({
+    operationId: 'complete',
+    description: 'Complete an enrolled content',
+  })
   @Patch('complete/:contentId')
   async completeContent(@Req() req, @Param('contentId') contentId: string) {
     const user = req.user as { userId: string };
