@@ -19,6 +19,7 @@ import {
   ContentCategory,
 } from 'src/types/content.enum';
 import { Roles } from 'src/auth/decorators/roles.decorator';
+import { UserContentMaps } from 'src/entities/userContentMaps.entity';
 
 @Controller('content')
 export class ContentController {
@@ -47,7 +48,7 @@ export class ContentController {
   @ApiResponse({
     status: 200,
     description: 'Successfully get enrolled contents',
-    type: [Content],
+    type: [UserContentMaps],
   })
   async getUserContents(@Req() req) {
     const user = req.user as { userId: string };
