@@ -57,7 +57,14 @@ export class ContentService {
     });
 
     const enrolledContents = enrollments.map((enrollment) => {
-      return enrollment.content;
+      return {
+        ...enrollment.content,
+        contentThumbnail: await getPresignedUrl(
+          this.minioClient,
+          'pictures',
+          enrollment.content.contentThumbnail,
+        );
+      };
     });
 
     return enrolledContents;
