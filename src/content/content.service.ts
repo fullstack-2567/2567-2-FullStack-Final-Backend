@@ -59,7 +59,7 @@ export class ContentService {
     const enrolledContents = await Promise.all(
       enrollments.map(async (enrollment) => {
         return {
-          ...enrollment.content,
+          ...enrollment.content.dataValues,
           contentThumbnail: await getPresignedUrl(
             this.minioClient,
             'pictures',
