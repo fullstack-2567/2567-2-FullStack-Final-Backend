@@ -56,14 +56,14 @@ export class ContentService {
       include: ['content'],
     });
 
-    const enrolledContents = enrollments.map((enrollment) => {
+    const enrolledContents = enrollments.map(async (enrollment) => {
       return {
         ...enrollment.content,
         contentThumbnail: await getPresignedUrl(
           this.minioClient,
           'pictures',
           enrollment.content.contentThumbnail,
-        );
+        ),
       };
     });
 
