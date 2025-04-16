@@ -55,7 +55,12 @@ export class ContentService {
       },
       include: ['content'],
     });
-    return enrollments;
+
+    const enrolledContents = enrollments.map((enrollment) => {
+      return enrollment.content;
+    });
+
+    return enrolledContents;
   }
 
   //create content
