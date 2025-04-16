@@ -44,6 +44,11 @@ export class ContentController {
     operationId: 'getUserContents',
     description: 'Get user enrolled contents',
   })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully get enrolled contents',
+    type: [Content],
+  })
   async getUserContents(@Req() req) {
     const user = req.user as { userId: string };
     const userId = user.userId;
