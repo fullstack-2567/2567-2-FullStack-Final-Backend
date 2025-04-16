@@ -37,10 +37,10 @@ export class User extends Model {
   @Column({ type: DataType.STRING, unique: true, allowNull: false })
   email: string;
 
-  @Column({ allowNull: true })
+  @Column({ type: DataType.TEXT, allowNull: true })
   picture: string;
 
-  @Column
+  @Column({ type: DataType.STRING })
   googleId: string;
 
   @ApiProperty({
