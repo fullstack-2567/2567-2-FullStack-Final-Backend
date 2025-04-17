@@ -20,6 +20,8 @@ import {
 } from 'src/types/content.enum';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { Enrollment } from 'src/entities/enrollment.entity';
+import { EnrollResponseDto } from 'src/dto/response/content/enroll.response.dto';
+import { CompleteResponseDto } from 'src/dto/response/content/complete.response.dto';
 
 @Controller('content')
 export class ContentController {
@@ -140,6 +142,11 @@ export class ContentController {
     operationId: 'enroll',
     description: 'Enroll to a content',
   })
+  @ApiResponse({
+    status: 201,
+    description: 'Successfully enrolled to a content',
+    type: EnrollResponseDto,
+  })
   @Post('enroll/:contentId')
   async enrollContent(@Req() req, @Param('contentId') contentId: string) {
     const user = req.user as { userId: string };
@@ -150,6 +157,11 @@ export class ContentController {
   @ApiOperation({
     operationId: 'complete',
     description: 'Complete an enrolled content',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully completed a content',
+    type: CompleteResponseDto,
   })
   @Patch('complete/:contentId')
   async completeContent(@Req() req, @Param('contentId') contentId: string) {
