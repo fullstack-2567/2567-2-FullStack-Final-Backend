@@ -64,6 +64,7 @@ export class Enrollment extends Model {
   @Column({
     type: DataType.DATE,
     defaultValue: DataType.NOW,
+    allowNull: false,
   })
   enrolledDT: Date;
 

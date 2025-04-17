@@ -209,22 +209,25 @@ export class ContentService {
   }
 
   async enrollContent(contentId: string, userId: string) {
-    const existingMap = await this.enrollmentRepository.findOne({
+    const existingEnrollment = await this.enrollmentRepository.findOne({
       where: {
         userId: userId,
         contentId: contentId,
       },
     });
 
-    if (existingMap) {
+    if (existingEnrollment) {
       throw new Error('Content already enrolled');
     }
 
-    const contentMap = await this.enrollmentRepository.create({
+    const enrollment = await this.enrollmentRepository.create({
       userId: userId,
       contentId: contentId,
     });
-    return contentMap;
+    return {
+      status: 'success',
+      data: enrollment,
+    };
   }
 
   async completeContent(contentId: string, userId: string) {
@@ -248,12 +251,16 @@ export class ContentService {
         },
       },
     );
-    const updatedContentMap = await this.enrollmentRepository.findOne({
+    const updatedEnrollment = await this.enrollmentRepository.findOne({
       where: {
         userId: userId,
         contentId: contentId,
       },
     });
-    return updatedContentMap;
+
+    return {
+      status: 'success',
+      data: updatedEnrollment,
+    };
   }
 }
